@@ -1,0 +1,220 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#173a33" />
+    <meta
+      name="description"
+      content="2026 年卢森堡、比利时与巴黎旅行计划，包含逐日行程、住宿、地图、出发准备和行李清单。"
+    />
+    <title>2026 欧洲旅行计划</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="hero" id="top">
+        <img
+          class="hero__image"
+          src="./assets/luxembourg-old-city.jpg"
+          alt="卢森堡老城建筑与城墙"
+        />
+        <div class="hero__shade"></div>
+        <div class="hero__topbar">
+          <div class="trip-mark" aria-label="2026 欧洲旅行">
+            <span class="trip-mark__rule"></span>
+            <span>EUROPE '26</span>
+          </div>
+          <button class="icon-button hero__share" id="shareTrip" type="button" title="分享旅行计划" aria-label="分享旅行计划">
+            <i data-lucide="share-2"></i>
+          </button>
+        </div>
+        <div class="hero__content">
+          <p class="hero__eyebrow">9 月 30 日至 10 月 9 日 · 9 晚</p>
+          <h1>卢森堡 · 比利时 · 巴黎</h1>
+          <p class="hero__route">香港 → 卢森堡 → 布鲁塞尔 → 巴黎 → 香港</p>
+          <div class="countdown" aria-live="polite">
+            <strong id="countdownValue">--</strong>
+            <span id="countdownLabel">距出发</span>
+          </div>
+        </div>
+      </header>
+
+      <main>
+        <section class="view is-active" id="view-overview" data-view="overview" aria-labelledby="overviewTitle">
+          <div class="section-heading">
+            <div>
+              <p class="section-kicker">TRIP AT A GLANCE</p>
+              <h2 id="overviewTitle">旅程总览</h2>
+            </div>
+            <span class="sync-status" title="进度保存在当前设备">
+              <i data-lucide="smartphone"></i>
+              本机保存
+            </span>
+          </div>
+
+          <div class="metric-grid" aria-label="旅行数据">
+            <div class="metric"><strong>10</strong><span>天</span></div>
+            <div class="metric"><strong>5</strong><span>城市</span></div>
+            <div class="metric"><strong>3</strong><span>国家</span></div>
+            <div class="metric"><strong>9</strong><span>晚</span></div>
+          </div>
+
+          <section class="route-section" aria-labelledby="routeTitle">
+            <div class="subheading-row">
+              <h3 id="routeTitle">路线</h3>
+              <button class="text-button" type="button" data-open-view="itinerary">
+                查看行程
+                <i data-lucide="arrow-right"></i>
+              </button>
+            </div>
+            <div class="route-rail" aria-label="主要路线">
+              <div class="route-stop route-stop--green"><span>LUX</span><strong>卢森堡</strong><small>3 晚</small></div>
+              <div class="route-line"><i data-lucide="train-front"></i></div>
+              <div class="route-stop route-stop--blue"><span>BRU</span><strong>布鲁塞尔</strong><small>4 晚</small></div>
+              <div class="route-line"><i data-lucide="train-front"></i></div>
+              <div class="route-stop route-stop--red"><span>PAR</span><strong>巴黎</strong><small>2 晚</small></div>
+            </div>
+            <div class="day-trip-strip">
+              <span>布鲁塞尔往返</span>
+              <a href="https://www.google.com/maps/search/?api=1&query=Bruges%2C%20Belgium" target="_blank" rel="noreferrer">布鲁日</a>
+              <a href="https://www.google.com/maps/search/?api=1&query=Ghent%2C%20Belgium" target="_blank" rel="noreferrer">根特</a>
+            </div>
+          </section>
+
+          <section class="next-section" aria-labelledby="nextTitle">
+            <div class="subheading-row">
+              <h3 id="nextTitle">下一步</h3>
+              <span id="overallPercent">0% 已完成</span>
+            </div>
+            <div class="progress-track" aria-hidden="true"><span id="overallProgress"></span></div>
+            <button class="next-action" type="button" data-open-view="prepare">
+              <span class="next-action__icon"><i data-lucide="circle-check-big"></i></span>
+              <span>
+                <small>出发前 7 天</small>
+                <strong>核对护照、签证与保险</strong>
+              </span>
+              <i data-lucide="chevron-right"></i>
+            </button>
+          </section>
+
+          <section class="today-section" aria-labelledby="firstDayTitle">
+            <div class="subheading-row">
+              <h3 id="firstDayTitle">第一天</h3>
+              <time datetime="2026-09-30">9 月 30 日</time>
+            </div>
+            <div class="spotlight-card">
+              <div class="spotlight-card__time">14:00</div>
+              <div class="spotlight-card__body">
+                <span class="city-label">LUXEMBOURG</span>
+                <h4>抵达卢森堡</h4>
+                <p>乘 29 路巴士前往 Luxembourg Gare，步行至酒店办理入住。</p>
+                <a href="https://www.google.com/maps/search/?api=1&query=Luxembourg%20Gare" target="_blank" rel="noreferrer">
+                  <i data-lucide="map-pin"></i>
+                  打开地图
+                </a>
+              </div>
+            </div>
+          </section>
+        </section>
+
+        <section class="view" id="view-itinerary" data-view="itinerary" aria-labelledby="itineraryTitle" hidden>
+          <div class="page-header">
+            <p class="section-kicker">DAY BY DAY</p>
+            <h2 id="itineraryTitle">每日行程</h2>
+            <p>2026 年 9 月 30 日至 10 月 9 日</p>
+          </div>
+          <div class="day-picker" id="dayPicker" aria-label="选择日期"></div>
+          <div class="itinerary-list" id="itineraryList"></div>
+        </section>
+
+        <section class="view" id="view-stays" data-view="stays" aria-labelledby="staysTitle" hidden>
+          <div class="page-header">
+            <p class="section-kicker">STAYS & TICKETS</p>
+            <h2 id="staysTitle">预订信息</h2>
+            <p>住宿共 9 晚，最终信息需与签证材料一致。</p>
+          </div>
+          <div class="booking-summary">
+            <div><span>住宿</span><strong>3 间</strong></div>
+            <div><span>火车</span><strong>3 段</strong></div>
+            <div><span>待确认</span><strong id="pendingBookingCount">3 项</strong></div>
+          </div>
+          <div class="booking-list" id="bookingList"></div>
+          <div class="safety-note">
+            <i data-lucide="shield-alert"></i>
+            <p><strong>隐私提醒</strong><span>公开发布时不要填写护照号、身份证号、银行卡号或完整订单编号。</span></p>
+          </div>
+        </section>
+
+        <section class="view" id="view-prepare" data-view="prepare" aria-labelledby="prepareTitle" hidden>
+          <div class="page-header">
+            <p class="section-kicker">BEFORE YOU GO</p>
+            <h2 id="prepareTitle">出发准备</h2>
+            <p id="prepareSummary">0 项已完成</p>
+          </div>
+
+          <div class="segmented-control" role="tablist" aria-label="准备清单类型">
+            <button class="is-active" type="button" role="tab" aria-selected="true" data-prep-pane="tasks">出发前</button>
+            <button type="button" role="tab" aria-selected="false" data-prep-pane="packing">行李清单</button>
+          </div>
+
+          <div class="prep-pane is-active" id="prep-tasks" data-prep-content="tasks">
+            <div class="checklist" id="taskList"></div>
+          </div>
+
+          <div class="prep-pane" id="prep-packing" data-prep-content="packing" hidden>
+            <div class="packing-toolbar">
+              <div class="category-filter" id="categoryFilter" aria-label="筛选行李分类"></div>
+              <div class="packing-progress"><span id="packingProgressText">0 / 47</span><div><i id="packingProgressBar"></i></div></div>
+            </div>
+            <div class="checklist checklist--packing" id="packingList"></div>
+            <form class="add-item" id="addPackingForm">
+              <input id="newPackingItem" type="text" maxlength="40" placeholder="添加自定义物品" aria-label="添加自定义物品" />
+              <button class="icon-button" type="submit" title="添加物品" aria-label="添加物品"><i data-lucide="plus"></i></button>
+            </form>
+          </div>
+        </section>
+
+        <section class="view" id="view-notes" data-view="notes" aria-labelledby="notesTitle" hidden>
+          <div class="page-header">
+            <p class="section-kicker">TRAVEL NOTES</p>
+            <h2 id="notesTitle">旅行备忘</h2>
+            <p>临时安排、餐厅、购物和同行约定。</p>
+          </div>
+          <label class="notes-editor">
+            <span>备忘内容</span>
+            <textarea id="tripNotes" rows="14" placeholder="例如：抵达后先买交通卡；布鲁日游船视天气决定……"></textarea>
+          </label>
+          <div class="notes-footer">
+            <span id="notesSaved">尚未保存</span>
+            <button class="text-button" id="clearNotes" type="button"><i data-lucide="eraser"></i>清空</button>
+          </div>
+          <div class="quick-links">
+            <h3>常用入口</h3>
+            <a href="https://www.google.com/maps" target="_blank" rel="noreferrer"><i data-lucide="map"></i><span>Google Maps</span><i data-lucide="external-link"></i></a>
+            <a href="https://www.eurostar.com" target="_blank" rel="noreferrer"><i data-lucide="train-front"></i><span>Eurostar</span><i data-lucide="external-link"></i></a>
+            <a href="https://www.mobiliteit.lu" target="_blank" rel="noreferrer"><i data-lucide="bus-front"></i><span>卢森堡公共交通</span><i data-lucide="external-link"></i></a>
+          </div>
+        </section>
+      </main>
+
+      <footer class="site-footer">
+        <p>行程资料更新于 2026 年 9 月</p>
+        <a href="https://commons.wikimedia.org/wiki/File:Luxembourg_(Old_city_panorama).JPG" target="_blank" rel="noreferrer">照片：Nikilux · CC BY-SA 3.0 LU</a>
+      </footer>
+
+      <nav class="bottom-nav" aria-label="主要导航">
+        <button class="is-active" type="button" data-nav-view="overview" aria-current="page"><i data-lucide="layout-dashboard"></i><span>总览</span></button>
+        <button type="button" data-nav-view="itinerary"><i data-lucide="route"></i><span>行程</span></button>
+        <button type="button" data-nav-view="stays"><i data-lucide="ticket-check"></i><span>预订</span></button>
+        <button type="button" data-nav-view="prepare"><i data-lucide="list-checks"></i><span>准备</span></button>
+        <button type="button" data-nav-view="notes"><i data-lucide="notebook-pen"></i><span>备忘</span></button>
+      </nav>
+
+      <div class="toast" id="toast" role="status" aria-live="polite"></div>
+    </div>
+
+    <script src="./assets/lucide.min.js"></script>
+    <script src="./app.js"></script>
+  </body>
+</html>
