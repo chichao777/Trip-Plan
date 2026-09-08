@@ -232,8 +232,8 @@ const cityProfiles = [
     safety: "总体风险较低；Gare 周边深夜保持警觉，返程凌晨在照明和有人流处等候。",
     image: "./assets/luxembourg-bock.jpg",
     imageAlt: "卢森堡博克要塞与老城",
-    imageSource: "https://commons.wikimedia.org/wiki/File:Selig_Luxembourg_from_Paffendall.jpg",
-    imageCredit: "Christophe-Guillaume Selig · Public domain",
+    imageSource: "https://commons.wikimedia.org/wiki/File:Luxembourg_City_from_the_Bock_Casements.jpg",
+    imageCredit: "P. Hughes · CC BY-SA 4.0",
     attractions: [
       { name: "博克炮台", type: "建筑", note: "地下防御体系是城市空间的核心；开放时段待核验。", query: "Bock Casemates Luxembourg", url: "https://www.luxembourg-city.com/en/place/monuments/bock-casemates" },
       { name: "Chemin de la Corniche", type: "城市景观", note: "俯瞰 Grund 的连续步行线，适合建筑摄影。", query: "Chemin de la Corniche Luxembourg", url: "https://www.luxembourg-city.com/en/place/walking/chemin-de-la-corniche" },

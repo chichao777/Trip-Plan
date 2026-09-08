@@ -1717,6 +1717,10 @@ h4 {
   font-size: 9px;
 }
 
+.city-map img.leaflet-tile {
+  mix-blend-mode: normal;
+}
+
 .city-map .leaflet-tooltip {
   color: var(--ink);
   border: 0;
@@ -1814,18 +1818,22 @@ h4 {
 
 .city-visual {
   position: relative;
+  display: grid;
+  place-items: center;
   overflow: hidden;
-  aspect-ratio: 16 / 9;
+  height: clamp(300px, 68vw, 520px);
   margin: 0;
   border-radius: 6px;
-  background: #d6ddd9;
+  background: #e8ecea;
 }
 
 .city-visual img {
+  position: absolute;
+  inset: 0;
   display: block;
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
 }
 
 .city-visual figcaption {
@@ -1867,11 +1875,12 @@ h4 {
 }
 
 .city-fit {
+  min-width: 60px;
   flex: 0 0 auto;
   text-align: right;
 }
 
-.city-fit > span {
+.city-fit > span:first-child {
   display: block;
   margin-bottom: 5px;
   color: var(--muted);
@@ -1879,14 +1888,17 @@ h4 {
 }
 
 .match-meter {
-  display: inline-flex;
+  display: flex;
   align-items: center;
+  justify-content: flex-end;
   gap: 3px;
 }
 
 .match-meter i {
+  display: block;
   width: 9px;
   height: 9px;
+  flex: 0 0 9px;
   border: 1px solid #9da9a4;
   border-radius: 50%;
 }
