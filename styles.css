@@ -1821,7 +1821,7 @@ h4 {
   display: grid;
   place-items: center;
   overflow: hidden;
-  height: clamp(300px, 68vw, 520px);
+  aspect-ratio: 1280 / 994;
   margin: 0;
   border-radius: 6px;
   background: #e8ecea;
@@ -1833,7 +1833,7 @@ h4 {
   display: block;
   width: 100%;
   height: 100%;
-  object-fit: contain;
+  object-fit: cover;
 }
 
 .city-visual figcaption {
