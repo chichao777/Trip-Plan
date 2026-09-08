@@ -869,6 +869,11 @@ const defaultMemoTodos = [
 ];
 
 const STORAGE_KEY = "europe-trip-2026-20260908-state-v1";
+const LOCAL_UPDATED_KEY = `${STORAGE_KEY}-updated-at`;
+const LOCAL_PENDING_KEY = `${STORAGE_KEY}-pending-cloud-sync`;
+const TRIP_SYNC_ID = "europe-trip-2026";
+const SUPABASE_URL = "https://rpswfigfnseofehxkfie.supabase.co";
+const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_LnoBI1cTWU9g5s2MZNtFng_Uffo24E7";
 const defaultState = {
   tasks: {},
   taskEdits: {},
@@ -883,7 +888,17 @@ const defaultState = {
   memoTodos: defaultMemoTodos
 };
 
+const supabaseClient = window.supabase?.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
+  auth: {
+    persistSession: true,
+    autoRefreshToken: true,
+    detectSessionInUrl: true,
+    storageKey: "europe-trip-2026-auth-v1"
+  }
+});
+
 let state = loadState();
+let localUpdatedAt = Number(localStorage.getItem(LOCAL_UPDATED_KEY)) || 0;
 let activeCategory = "全部";
 let editingTaskId = null;
 let editingPackingId = null;
@@ -891,54 +906,76 @@ let toastTimer;
 let activeCityId = "barcelona";
 let cityMapInstance;
 const cityMarkers = new Map();
+let cloudSession = null;
+let activeSyncUserId = null;
+let cloudChannel = null;
+let cloudSaveTimer = null;
+let cloudSaveInFlight = null;
+let cloudSaveQueued = false;
+let cloudLastUpdatedAt = 0;
+let currentSyncState = "local";
+
+function normalizeState(saved = {}) {
+  const source = saved && typeof saved === "object" && !Array.isArray(saved) ? saved : {};
+  let memoTodos;
+
+  if (Array.isArray(source.memoTodos)) {
+    memoTodos = source.memoTodos
+      .filter((item) => item && typeof item.text === "string")
+      .map((item, index) => ({
+        id: String(item.id || `memo-saved-${index}`),
+        text: item.id === "memo-stays" && item.text === "确认卢森堡、布拉格和德累斯顿住宿"
+          ? "核对 4 家青旅订单、入住时间和取消政策"
+          : item.text,
+        completed: Boolean(item.completed)
+      }));
+  } else if (typeof source.notes === "string" && source.notes.trim()) {
+    memoTodos = source.notes
+      .split(/\r?\n/)
+      .map((text) => text.trim())
+      .filter(Boolean)
+      .map((text, index) => ({ id: `memo-migrated-${index}`, text, completed: false }));
+  } else {
+    memoTodos = defaultMemoTodos.map((item) => ({ ...item }));
+  }
+
+  return {
+    ...defaultState,
+    ...source,
+    tasks: source.tasks && typeof source.tasks === "object" && !Array.isArray(source.tasks) ? source.tasks : {},
+    taskEdits: source.taskEdits && typeof source.taskEdits === "object" && !Array.isArray(source.taskEdits) ? source.taskEdits : {},
+    deletedTasks: Array.isArray(source.deletedTasks) ? source.deletedTasks.map(String) : [],
+    customTasks: Array.isArray(source.customTasks)
+      ? source.customTasks.filter((item) => item && typeof item.task === "string")
+      : [],
+    packing: source.packing && typeof source.packing === "object" && !Array.isArray(source.packing) ? source.packing : {},
+    packingEdits: source.packingEdits && typeof source.packingEdits === "object" && !Array.isArray(source.packingEdits) ? source.packingEdits : {},
+    deletedPacking: Array.isArray(source.deletedPacking) ? source.deletedPacking.map(String) : [],
+    bookings: source.bookings && typeof source.bookings === "object" && !Array.isArray(source.bookings) ? source.bookings : {},
+    customPacking: Array.isArray(source.customPacking)
+      ? source.customPacking.filter((item) => item && typeof item.item === "string")
+      : [],
+    notes: "",
+    memoTodos
+  };
+}
 
 function loadState() {
   try {
-    const saved = JSON.parse(localStorage.getItem(STORAGE_KEY)) || {};
-    let memoTodos;
-
-    if (Array.isArray(saved.memoTodos)) {
-      memoTodos = saved.memoTodos
-        .filter((item) => item && typeof item.text === "string")
-        .map((item, index) => ({
-          id: String(item.id || `memo-saved-${index}`),
-          text: item.id === "memo-stays" && item.text === "确认卢森堡、布拉格和德累斯顿住宿"
-            ? "核对 4 家青旅订单、入住时间和取消政策"
-            : item.text,
-          completed: Boolean(item.completed)
-        }));
-    } else if (typeof saved.notes === "string" && saved.notes.trim()) {
-      memoTodos = saved.notes
-        .split(/\r?\n/)
-        .map((text) => text.trim())
-        .filter(Boolean)
-        .map((text, index) => ({ id: `memo-migrated-${index}`, text, completed: false }));
-    } else {
-      memoTodos = defaultMemoTodos.map((item) => ({ ...item }));
-    }
-
-    return {
-      ...defaultState,
-      ...saved,
-      taskEdits: saved.taskEdits && typeof saved.taskEdits === "object" ? saved.taskEdits : {},
-      deletedTasks: Array.isArray(saved.deletedTasks) ? saved.deletedTasks.map(String) : [],
-      customTasks: Array.isArray(saved.customTasks)
-        ? saved.customTasks.filter((item) => item && typeof item.task === "string")
-        : [],
-      packingEdits: saved.packingEdits && typeof saved.packingEdits === "object" ? saved.packingEdits : {},
-      deletedPacking: Array.isArray(saved.deletedPacking) ? saved.deletedPacking.map(String) : [],
-      notes: "",
-      memoTodos
-    };
+    return normalizeState(JSON.parse(localStorage.getItem(STORAGE_KEY)) || {});
   } catch {
-    return { ...defaultState, memoTodos: defaultMemoTodos.map((item) => ({ ...item })) };
+    return normalizeState();
   }
 }
 
-function saveState() {
+function saveState({ queueCloud = true, modifiedAt = Date.now() } = {}) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  localUpdatedAt = modifiedAt;
+  localStorage.setItem(LOCAL_UPDATED_KEY, String(localUpdatedAt));
+  localStorage.setItem(LOCAL_PENDING_KEY, queueCloud ? "1" : "0");
   updateProgress();
   updateMemoProgress();
+  if (queueCloud) scheduleCloudSave();
 }
 
 function escapeHtml(value) {
@@ -964,6 +1001,308 @@ function showToast(message) {
   toast.classList.add("is-visible");
   window.clearTimeout(toastTimer);
   toastTimer = window.setTimeout(() => toast.classList.remove("is-visible"), 2200);
+}
+
+function hasPendingCloudChanges() {
+  return localStorage.getItem(LOCAL_PENDING_KEY) === "1";
+}
+
+function setSyncDialogMessage(message, icon = "info", stateName = currentSyncState) {
+  const status = document.getElementById("syncDialogStatus");
+  if (!status) return;
+  status.dataset.state = stateName;
+  status.innerHTML = `<i data-lucide="${icon}"></i><span>${escapeHtml(message)}</span>`;
+  refreshIcons();
+}
+
+function updateSyncStatus(stateName, detail) {
+  const statuses = {
+    local: { icon: "cloud-off", label: "本机保存", detail: "当前保存在本机", title: "登录后开启跨设备同步" },
+    syncing: { icon: "refresh-cw", label: "同步中", detail: "正在读取云端数据", title: "正在同步" },
+    saving: { icon: "loader-circle", label: "正在保存", detail: "正在保存所有修改", title: "正在保存到云端" },
+    synced: { icon: "cloud-check", label: "云端已同步", detail: "所有修改已同步", title: "已同步到云端" },
+    offline: { icon: "wifi-off", label: "等待联网", detail: "离线修改将在联网后同步", title: "当前离线" },
+    error: { icon: "triangle-alert", label: "同步失败", detail: "同步失败，请稍后重试", title: "打开同步设置" }
+  };
+  const next = statuses[stateName] || statuses.local;
+  currentSyncState = stateName;
+
+  const button = document.getElementById("syncStatusButton");
+  if (button) {
+    button.dataset.state = stateName;
+    button.title = next.title;
+    button.innerHTML = `<i data-lucide="${next.icon}"></i><span id="syncStatusText">${next.label}</span>`;
+  }
+  setSyncDialogMessage(detail || next.detail, next.icon, stateName);
+  refreshIcons();
+}
+
+function updateSyncAccount(session) {
+  const loginForm = document.getElementById("syncLoginForm");
+  const account = document.getElementById("syncAccount");
+  const email = document.getElementById("syncUserEmail");
+  const signedIn = Boolean(session?.user);
+  loginForm.hidden = signedIn;
+  account.hidden = !signedIn;
+  email.textContent = signedIn ? session.user.email || "已登录" : "";
+}
+
+function renderSynchronizedState() {
+  editingTaskId = null;
+  editingPackingId = null;
+  renderBookings();
+  renderTasks();
+  renderPacking();
+  renderMemoTodos();
+  updateProgress();
+  refreshIcons();
+}
+
+function applyCloudRecord(record, notify = false) {
+  state = normalizeState(record.state);
+  cloudLastUpdatedAt = Date.parse(record.updated_at) || Date.now();
+  saveState({ queueCloud: false, modifiedAt: cloudLastUpdatedAt });
+  renderSynchronizedState();
+  updateSyncStatus("synced");
+  if (notify) showToast("已同步另一台设备的更新");
+}
+
+function scheduleCloudSave(delay = 650) {
+  window.clearTimeout(cloudSaveTimer);
+  if (!cloudSession || !supabaseClient) {
+    updateSyncStatus("local");
+    return;
+  }
+  if (!navigator.onLine) {
+    updateSyncStatus("offline");
+    return;
+  }
+  updateSyncStatus("saving");
+  cloudSaveTimer = window.setTimeout(() => {
+    pushCloudState();
+  }, delay);
+}
+
+async function pushCloudState() {
+  if (!cloudSession || !supabaseClient) {
+    updateSyncStatus("local");
+    return false;
+  }
+  if (!navigator.onLine) {
+    updateSyncStatus("offline");
+    return false;
+  }
+  if (cloudSaveInFlight) {
+    cloudSaveQueued = true;
+    return cloudSaveInFlight;
+  }
+
+  window.clearTimeout(cloudSaveTimer);
+  cloudSaveTimer = null;
+  cloudSaveQueued = false;
+  const snapshot = JSON.parse(JSON.stringify(state));
+  const snapshotJson = JSON.stringify(snapshot);
+  const sentAt = localUpdatedAt;
+  updateSyncStatus("saving");
+
+  cloudSaveInFlight = (async () => {
+    const { data, error } = await supabaseClient
+      .from("trip_states")
+      .upsert({
+        user_id: cloudSession.user.id,
+        trip_id: TRIP_SYNC_ID,
+        state: snapshot
+      }, { onConflict: "user_id,trip_id" })
+      .select("updated_at")
+      .single();
+
+    if (error) throw error;
+    cloudLastUpdatedAt = Date.parse(data.updated_at) || Date.now();
+    const unchanged = sentAt === localUpdatedAt && snapshotJson === JSON.stringify(state);
+    if (unchanged) {
+      localStorage.setItem(LOCAL_PENDING_KEY, "0");
+      localUpdatedAt = cloudLastUpdatedAt;
+      localStorage.setItem(LOCAL_UPDATED_KEY, String(localUpdatedAt));
+      updateSyncStatus("synced");
+    } else {
+      cloudSaveQueued = true;
+    }
+    return true;
+  })();
+
+  try {
+    return await cloudSaveInFlight;
+  } catch {
+    updateSyncStatus(navigator.onLine ? "error" : "offline");
+    return false;
+  } finally {
+    cloudSaveInFlight = null;
+    if (cloudSaveQueued) scheduleCloudSave(200);
+  }
+}
+
+async function synchronizeCloudState() {
+  if (!cloudSession || !supabaseClient) return false;
+  if (!navigator.onLine) {
+    updateSyncStatus("offline");
+    return false;
+  }
+
+  updateSyncStatus("syncing");
+  const { data, error } = await supabaseClient
+    .from("trip_states")
+    .select("state,updated_at")
+    .eq("user_id", cloudSession.user.id)
+    .eq("trip_id", TRIP_SYNC_ID)
+    .maybeSingle();
+
+  if (error) {
+    updateSyncStatus("error", "无法读取云端数据，请检查后重试");
+    return false;
+  }
+
+  if (!data) return pushCloudState();
+  const remoteUpdatedAt = Date.parse(data.updated_at) || 0;
+  if (hasPendingCloudChanges() && localUpdatedAt >= remoteUpdatedAt) return pushCloudState();
+  applyCloudRecord(data);
+  return true;
+}
+
+function stopCloudSubscription() {
+  if (cloudChannel && supabaseClient) supabaseClient.removeChannel(cloudChannel);
+  cloudChannel = null;
+}
+
+function subscribeToCloudState() {
+  stopCloudSubscription();
+  if (!cloudSession || !supabaseClient) return;
+
+  cloudChannel = supabaseClient
+    .channel(`trip-state-${cloudSession.user.id}`)
+    .on("postgres_changes", {
+      event: "*",
+      schema: "public",
+      table: "trip_states",
+      filter: `user_id=eq.${cloudSession.user.id}`
+    }, (payload) => {
+      const record = payload.new;
+      if (!record || record.trip_id !== TRIP_SYNC_ID) return;
+      const incoming = normalizeState(record.state);
+      const sameState = JSON.stringify(incoming) === JSON.stringify(state);
+      cloudLastUpdatedAt = Math.max(cloudLastUpdatedAt, Date.parse(record.updated_at) || 0);
+      if (sameState) {
+        if (!cloudSaveQueued) localStorage.setItem(LOCAL_PENDING_KEY, "0");
+        updateSyncStatus("synced");
+        return;
+      }
+      if (!hasPendingCloudChanges()) applyCloudRecord(record, true);
+    })
+    .subscribe((status) => {
+      if (status === "CHANNEL_ERROR" || status === "TIMED_OUT") {
+        updateSyncStatus(navigator.onLine ? "error" : "offline");
+      }
+    });
+}
+
+async function setCloudSession(session) {
+  const nextUserId = session?.user?.id || null;
+  cloudSession = session;
+  updateSyncAccount(session);
+
+  if (!nextUserId) {
+    activeSyncUserId = null;
+    stopCloudSubscription();
+    updateSyncStatus("local");
+    return;
+  }
+  if (activeSyncUserId === nextUserId) return;
+
+  activeSyncUserId = nextUserId;
+  subscribeToCloudState();
+  await synchronizeCloudState();
+}
+
+function setupCloudSync() {
+  const dialog = document.getElementById("syncDialog");
+  const statusButton = document.getElementById("syncStatusButton");
+  const closeButton = document.getElementById("closeSyncDialog");
+  const loginForm = document.getElementById("syncLoginForm");
+  const syncNowButton = document.getElementById("syncNowButton");
+  const signOutButton = document.getElementById("syncSignOutButton");
+
+  updateSyncAccount(null);
+  updateSyncStatus("local");
+  statusButton.addEventListener("click", () => dialog.showModal());
+  closeButton.addEventListener("click", () => dialog.close());
+  dialog.addEventListener("click", (event) => {
+    if (event.target === dialog) dialog.close();
+  });
+
+  loginForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const input = document.getElementById("syncEmail");
+    const submitButton = loginForm.querySelector("button[type='submit']");
+    const email = input.value.trim();
+    if (!email || !supabaseClient) return;
+
+    submitButton.disabled = true;
+    submitButton.textContent = "发送中";
+    const redirectTo = `${window.location.origin}${window.location.pathname}`;
+    const { error } = await supabaseClient.auth.signInWithOtp({
+      email,
+      options: { emailRedirectTo: redirectTo, shouldCreateUser: true }
+    });
+    submitButton.disabled = false;
+    submitButton.textContent = "发送登录链接";
+    if (error) {
+      setSyncDialogMessage("登录链接发送失败，请稍后重试", "triangle-alert", "error");
+      return;
+    }
+    setSyncDialogMessage("登录链接已发送，请查看邮箱", "mail-check", "local");
+  });
+
+  syncNowButton.addEventListener("click", async () => {
+    syncNowButton.disabled = true;
+    syncNowButton.classList.add("is-loading");
+    await synchronizeCloudState();
+    syncNowButton.disabled = false;
+    syncNowButton.classList.remove("is-loading");
+  });
+
+  signOutButton.addEventListener("click", async () => {
+    signOutButton.disabled = true;
+    const { error } = await supabaseClient.auth.signOut({ scope: "local" });
+    signOutButton.disabled = false;
+    if (error) {
+      setSyncDialogMessage("退出失败，请稍后重试", "triangle-alert", "error");
+      return;
+    }
+    dialog.close();
+    showToast("已退出云端同步");
+  });
+
+  window.addEventListener("offline", () => {
+    if (cloudSession) updateSyncStatus("offline");
+  });
+  window.addEventListener("online", () => {
+    if (cloudSession) {
+      if (hasPendingCloudChanges()) scheduleCloudSave(100);
+      else synchronizeCloudState();
+    }
+  });
+
+  if (!supabaseClient) {
+    updateSyncStatus("error", "云端同步组件加载失败");
+    return;
+  }
+
+  supabaseClient.auth.onAuthStateChange((_event, session) => {
+    window.setTimeout(() => setCloudSession(session), 0);
+  });
+  supabaseClient.auth.getSession().then(({ data, error }) => {
+    if (error) updateSyncStatus("error", "无法读取登录状态");
+    else setCloudSession(data.session);
+  });
 }
 
 function matchMeter(value) {
@@ -1841,6 +2180,7 @@ setupItineraryTabs();
 setupPreparationTabs();
 setupNotes();
 setupShare();
+setupCloudSync();
 updateProgress();
 refreshIcons();
 setupFlightCarousel();

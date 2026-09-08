@@ -49,10 +49,10 @@
               <p class="section-kicker">TRIP AT A GLANCE</p>
               <h2 id="overviewTitle">旅程总览</h2>
             </div>
-            <span class="sync-status" title="进度保存在当前设备">
-              <i data-lucide="smartphone"></i>
-              本机保存
-            </span>
+            <button class="sync-status" id="syncStatusButton" type="button" title="设置云端同步" aria-haspopup="dialog">
+              <i data-lucide="cloud-off"></i>
+              <span id="syncStatusText">本机保存</span>
+            </button>
           </div>
 
           <div class="metric-grid" aria-label="旅行数据">
@@ -329,11 +329,48 @@
         <button type="button" data-nav-view="notes"><i data-lucide="notebook-pen"></i><span>备忘</span></button>
       </nav>
 
+      <dialog class="sync-dialog" id="syncDialog" aria-labelledby="syncDialogTitle">
+        <div class="sync-dialog__panel">
+          <div class="sync-dialog__head">
+            <div>
+              <p class="section-kicker">CLOUD SYNC</p>
+              <h2 id="syncDialogTitle">云端同步</h2>
+            </div>
+            <button class="icon-button sync-dialog__close" id="closeSyncDialog" type="button" title="关闭" aria-label="关闭云端同步"><i data-lucide="x"></i></button>
+          </div>
+
+          <form class="sync-login-form" id="syncLoginForm">
+            <label for="syncEmail">邮箱</label>
+            <div class="sync-login-row">
+              <input id="syncEmail" type="email" autocomplete="email" inputmode="email" required placeholder="name@example.com" aria-label="登录邮箱" />
+              <button class="sync-primary-button" type="submit">发送登录链接</button>
+            </div>
+          </form>
+
+          <div class="sync-account" id="syncAccount" hidden>
+            <div class="sync-account__identity">
+              <i data-lucide="circle-user-round"></i>
+              <div><small>当前账号</small><strong id="syncUserEmail"></strong></div>
+            </div>
+            <div class="sync-account__actions">
+              <button class="sync-primary-button" id="syncNowButton" type="button"><i data-lucide="refresh-cw"></i>立即同步</button>
+              <button class="sync-secondary-button" id="syncSignOutButton" type="button">退出登录</button>
+            </div>
+          </div>
+
+          <div class="sync-dialog__status" id="syncDialogStatus" role="status" aria-live="polite">
+            <i data-lucide="smartphone"></i>
+            <span>当前保存在本机</span>
+          </div>
+        </div>
+      </dialog>
+
       <div class="toast" id="toast" role="status" aria-live="polite"></div>
     </div>
 
     <script src="./assets/lucide.min.js"></script>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin="anonymous"></script>
+    <script src="./assets/supabase.min.js"></script>
     <script src="./app.js"></script>
   </body>
 </html>

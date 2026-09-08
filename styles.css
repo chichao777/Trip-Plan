@@ -288,13 +288,251 @@ h4 {
   color: var(--muted);
   border: 1px solid var(--line);
   border-radius: 6px;
+  outline: 0;
+  background: var(--paper);
   font-size: 11px;
   white-space: nowrap;
+  cursor: pointer;
 }
 
 .sync-status svg {
   width: 14px;
   height: 14px;
+}
+
+.sync-status:hover,
+.sync-status:focus-visible {
+  color: var(--forest);
+  border-color: #a9bbb4;
+}
+
+.sync-status[data-state="synced"] {
+  color: var(--green);
+  border-color: #b6cec5;
+  background: var(--green-soft);
+}
+
+.sync-status[data-state="saving"],
+.sync-status[data-state="syncing"] {
+  color: var(--blue);
+}
+
+.sync-status[data-state="offline"],
+.sync-status[data-state="error"] {
+  color: var(--red);
+  border-color: #e2c4bd;
+  background: #fff8f6;
+}
+
+.sync-status[data-state="saving"] svg,
+.sync-status[data-state="syncing"] svg,
+.sync-primary-button.is-loading svg {
+  animation: sync-spin 900ms linear infinite;
+}
+
+@keyframes sync-spin {
+  to { transform: rotate(360deg); }
+}
+
+.sync-dialog {
+  width: min(calc(100% - 32px), 430px);
+  max-height: min(620px, calc(100dvh - 32px));
+  padding: 0;
+  color: var(--ink);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  outline: 0;
+  background: var(--paper);
+  box-shadow: 0 24px 70px rgba(17, 30, 26, 0.25);
+}
+
+.sync-dialog::backdrop {
+  background: rgba(14, 25, 22, 0.55);
+}
+
+.sync-dialog__panel {
+  padding: 22px;
+}
+
+.sync-dialog__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.sync-dialog__head h2 {
+  font-size: 25px;
+}
+
+.sync-dialog__close {
+  flex: 0 0 auto;
+  border-color: var(--line);
+}
+
+.sync-login-form {
+  margin-top: 22px;
+}
+
+.sync-login-form > label {
+  display: block;
+  margin-bottom: 7px;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.sync-login-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 8px;
+}
+
+.sync-login-row input {
+  min-width: 0;
+  height: 42px;
+  padding: 0 11px;
+  color: var(--ink);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  outline: 0;
+  background: #fbfcfc;
+}
+
+.sync-login-row input:focus {
+  border-color: var(--green);
+  box-shadow: 0 0 0 3px rgba(39, 114, 93, 0.12);
+}
+
+.sync-primary-button,
+.sync-secondary-button {
+  display: inline-flex;
+  min-height: 42px;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 8px 13px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.sync-primary-button {
+  color: #fff;
+  border: 1px solid var(--forest);
+  background: var(--forest);
+}
+
+.sync-secondary-button {
+  color: var(--muted);
+  border: 1px solid var(--line);
+  background: var(--paper);
+}
+
+.sync-primary-button:disabled,
+.sync-secondary-button:disabled {
+  opacity: 0.55;
+  cursor: wait;
+}
+
+.sync-primary-button svg,
+.sync-secondary-button svg {
+  width: 15px;
+  height: 15px;
+}
+
+.sync-account {
+  margin-top: 22px;
+}
+
+.sync-account__identity {
+  display: grid;
+  grid-template-columns: 32px minmax(0, 1fr);
+  align-items: center;
+  gap: 10px;
+  padding-block: 12px;
+  border-block: 1px solid var(--line);
+}
+
+.sync-account__identity > svg {
+  width: 24px;
+  height: 24px;
+  color: var(--green);
+}
+
+.sync-account__identity small,
+.sync-account__identity strong {
+  display: block;
+}
+
+.sync-account__identity small {
+  color: var(--muted);
+  font-size: 10px;
+}
+
+.sync-account__identity strong {
+  margin-top: 2px;
+  overflow-wrap: anywhere;
+  font-size: 13px;
+}
+
+.sync-account__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.sync-dialog__status {
+  display: flex;
+  min-height: 42px;
+  align-items: center;
+  gap: 8px;
+  margin-top: 20px;
+  padding-top: 14px;
+  color: var(--muted);
+  border-top: 1px solid var(--line);
+  font-size: 11px;
+}
+
+.sync-dialog__status svg {
+  width: 16px;
+  height: 16px;
+  flex: 0 0 auto;
+}
+
+.sync-dialog__status[data-state="synced"] {
+  color: var(--green);
+}
+
+.sync-dialog__status[data-state="offline"],
+.sync-dialog__status[data-state="error"] {
+  color: var(--red);
+}
+
+@media (max-width: 390px) {
+  .sync-login-row {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .sync-primary-button,
+  .sync-secondary-button {
+    width: 100%;
+  }
+
+  .sync-account__actions {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sync-status[data-state="saving"] svg,
+  .sync-status[data-state="syncing"] svg,
+  .sync-primary-button.is-loading svg {
+    animation: none;
+  }
 }
 
 .metric-grid {
