@@ -1113,6 +1113,8 @@ let cloudSaveInFlight = null;
 let cloudSaveQueued = false;
 let cloudLastUpdatedAt = 0;
 let currentSyncState = "local";
+let pendingSyncEmail = "";
+let otpResendTimer = null;
 
 function normalizeState(saved = {}) {
   const source = saved && typeof saved === "object" && !Array.isArray(saved) ? saved : {};
@@ -1237,13 +1239,70 @@ function updateSyncStatus(stateName, detail) {
 }
 
 function updateSyncAccount(session) {
-  const loginForm = document.getElementById("syncLoginForm");
+  const login = document.getElementById("syncLogin");
   const account = document.getElementById("syncAccount");
   const email = document.getElementById("syncUserEmail");
   const signedIn = Boolean(session?.user);
-  loginForm.hidden = signedIn;
+  login.hidden = signedIn;
   account.hidden = !signedIn;
   email.textContent = signedIn ? session.user.email || "已登录" : "";
+}
+
+function setSyncLoginStep(step, email = pendingSyncEmail) {
+  const emailForm = document.getElementById("syncEmailForm");
+  const otpForm = document.getElementById("syncOtpForm");
+  const pendingEmail = document.getElementById("syncPendingEmail");
+  const otpInput = document.getElementById("syncOtp");
+  const showOtp = step === "otp";
+
+  emailForm.hidden = showOtp;
+  otpForm.hidden = !showOtp;
+  if (showOtp) {
+    pendingSyncEmail = email;
+    pendingEmail.textContent = email;
+    otpInput.value = "";
+    window.setTimeout(() => otpInput.focus(), 0);
+  } else {
+    pendingSyncEmail = "";
+    window.clearInterval(otpResendTimer);
+    otpResendTimer = null;
+    window.setTimeout(() => document.getElementById("syncEmail").focus(), 0);
+  }
+  refreshIcons();
+}
+
+function startOtpResendCountdown(seconds = 60) {
+  const button = document.getElementById("syncResendCodeButton");
+  let remaining = seconds;
+  window.clearInterval(otpResendTimer);
+  button.disabled = true;
+  button.textContent = `${remaining} 秒后重发`;
+
+  otpResendTimer = window.setInterval(() => {
+    remaining -= 1;
+    if (remaining <= 0) {
+      window.clearInterval(otpResendTimer);
+      otpResendTimer = null;
+      button.disabled = false;
+      button.textContent = "重新发送";
+      return;
+    }
+    button.textContent = `${remaining} 秒后重发`;
+  }, 1000);
+}
+
+async function sendEmailOtp(email) {
+  if (!email || !supabaseClient) return false;
+  const redirectTo = `${window.location.origin}${window.location.pathname}`;
+  const { error } = await supabaseClient.auth.signInWithOtp({
+    email,
+    options: { emailRedirectTo: redirectTo, shouldCreateUser: true }
+  });
+  if (error) {
+    setSyncDialogMessage("验证码发送失败，请稍后重试", "triangle-alert", "error");
+    return false;
+  }
+  return true;
 }
 
 function renderSynchronizedState() {
@@ -1425,7 +1484,10 @@ function setupCloudSync() {
   const dialog = document.getElementById("syncDialog");
   const statusButton = document.getElementById("syncStatusButton");
   const closeButton = document.getElementById("closeSyncDialog");
-  const loginForm = document.getElementById("syncLoginForm");
+  const emailForm = document.getElementById("syncEmailForm");
+  const otpForm = document.getElementById("syncOtpForm");
+  const changeEmailButton = document.getElementById("syncChangeEmailButton");
+  const resendCodeButton = document.getElementById("syncResendCodeButton");
   const syncNowButton = document.getElementById("syncNowButton");
   const signOutButton = document.getElementById("syncSignOutButton");
 
@@ -1437,27 +1499,79 @@ function setupCloudSync() {
     if (event.target === dialog) dialog.close();
   });
 
-  loginForm.addEventListener("submit", async (event) => {
+  emailForm.addEventListener("submit", async (event) => {
     event.preventDefault();
     const input = document.getElementById("syncEmail");
-    const submitButton = loginForm.querySelector("button[type='submit']");
+    const submitButton = document.getElementById("syncSendCodeButton");
     const email = input.value.trim();
     if (!email || !supabaseClient) return;
 
     submitButton.disabled = true;
     submitButton.textContent = "发送中";
-    const redirectTo = `${window.location.origin}${window.location.pathname}`;
-    const { error } = await supabaseClient.auth.signInWithOtp({
-      email,
-      options: { emailRedirectTo: redirectTo, shouldCreateUser: true }
-    });
+    const sent = await sendEmailOtp(email);
     submitButton.disabled = false;
-    submitButton.textContent = "发送登录链接";
-    if (error) {
-      setSyncDialogMessage("登录链接发送失败，请稍后重试", "triangle-alert", "error");
+    submitButton.innerHTML = '<i data-lucide="mail"></i>发送验证码';
+    refreshIcons();
+    if (!sent) return;
+    setSyncLoginStep("otp", email);
+    startOtpResendCountdown();
+    setSyncDialogMessage("请查看邮箱，并在这里输入六位验证码", "mail-check", "local");
+  });
+
+  otpForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const input = document.getElementById("syncOtp");
+    const submitButton = document.getElementById("syncVerifyCodeButton");
+    const token = input.value.replace(/\D/g, "");
+    if (!pendingSyncEmail || token.length !== 6 || !supabaseClient) {
+      setSyncDialogMessage("请输入邮件中的六位验证码", "triangle-alert", "error");
+      input.focus();
       return;
     }
-    setSyncDialogMessage("登录链接已发送，请查看邮箱", "mail-check", "local");
+
+    submitButton.disabled = true;
+    submitButton.textContent = "验证中";
+    const { data, error } = await supabaseClient.auth.verifyOtp({
+      email: pendingSyncEmail,
+      token,
+      type: "email"
+    });
+    submitButton.disabled = false;
+    submitButton.innerHTML = '<i data-lucide="log-in"></i>确认登录';
+    refreshIcons();
+    if (error || !data.session) {
+      setSyncDialogMessage("验证码无效或已过期，请检查后重试", "triangle-alert", "error");
+      input.select();
+      return;
+    }
+
+    await setCloudSession(data.session);
+    setSyncLoginStep("email");
+    dialog.close();
+    showToast("登录成功，正在同步云端数据");
+  });
+
+  document.getElementById("syncOtp").addEventListener("input", (event) => {
+    event.target.value = event.target.value.replace(/\D/g, "").slice(0, 6);
+  });
+
+  changeEmailButton.addEventListener("click", () => {
+    setSyncLoginStep("email");
+    setSyncDialogMessage("输入邮箱以接收六位验证码", "mail", "local");
+  });
+
+  resendCodeButton.addEventListener("click", async () => {
+    if (!pendingSyncEmail) return;
+    resendCodeButton.disabled = true;
+    resendCodeButton.textContent = "发送中";
+    const sent = await sendEmailOtp(pendingSyncEmail);
+    if (!sent) {
+      resendCodeButton.disabled = false;
+      resendCodeButton.textContent = "重新发送";
+      return;
+    }
+    startOtpResendCountdown();
+    setSyncDialogMessage("验证码已重新发送，请查看邮箱", "mail-check", "local");
   });
 
   syncNowButton.addEventListener("click", async () => {
