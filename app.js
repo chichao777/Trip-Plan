@@ -2266,7 +2266,7 @@ function allPackingItems() {
   const builtIn = packingItems
     .filter((item) => !state.deletedPacking.includes(item.id))
     .map((item) => ({ ...item, item: state.packingEdits[item.id] || item.item }));
-  const custom = state.customPacking.map((item) => ({ ...item, category: "自定义", qty: 1, bag: "待安排", note: "" }));
+  const custom = state.customPacking.map((item) => ({ ...item, category: item.category || "自定义", qty: 1, bag: "待安排", note: "" }));
   return [...builtIn, ...custom];
 }
 
@@ -2493,9 +2493,10 @@ function setupPreparationTabs() {
     const input = document.getElementById("newPackingItem");
     const value = input.value.trim();
     if (!value) return;
-    state.customPacking.push({ id: `custom-${Date.now()}`, item: value });
+    const targetCategory = activeCategory === "全部" ? "自定义" : activeCategory;
+    state.customPacking.push({ id: `custom-${Date.now()}`, item: value, category: targetCategory });
     input.value = "";
-    activeCategory = "自定义";
+    activeCategory = targetCategory;
     editingPackingId = null;
     saveState();
     renderPacking();
