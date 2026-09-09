@@ -1050,6 +1050,22 @@ h4 {
   background: #b73e39;
 }
 
+.spotlight-card[data-mode="train"] .spotlight-card__time {
+  background: var(--gold);
+}
+
+.spotlight-card[data-mode="bus"] .spotlight-card__time {
+  background: var(--blue);
+}
+
+.spotlight-card[data-mode="stay"] .spotlight-card__time {
+  background: #586c66;
+}
+
+.spotlight-card[data-mode="complete"] .spotlight-card__time {
+  background: var(--green);
+}
+
 .spotlight-card__body {
   padding: 18px;
 }

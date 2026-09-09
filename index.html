@@ -144,18 +144,18 @@
             <div class="flight-carousel" id="flightCarousel" aria-label="本次旅行的全部航班" tabindex="0"></div>
           </section>
 
-          <section class="today-section" aria-labelledby="firstDayTitle">
+          <section class="today-section" aria-labelledby="dailyTransportTitle">
             <div class="subheading-row">
-              <h3 id="firstDayTitle">出发日</h3>
-              <time datetime="2026-09-29">9 月 29 日</time>
+              <h3 id="dailyTransportTitle">出发日</h3>
+              <time id="dailyTransportDate" datetime="2026-09-29">9 月 29 日</time>
             </div>
-            <div class="spotlight-card">
-              <div class="spotlight-card__time">23:25</div>
+            <div class="spotlight-card" id="dailyTransportCard" data-mode="flight" role="article" aria-label="9 月 29 日出发交通">
+              <div class="spotlight-card__time" id="dailyTransportTime">23:25</div>
               <div class="spotlight-card__body">
-                <span class="city-label">HONG KONG → FRANKFURT</span>
-                <h4>搭乘 LH797 出发</h4>
-                <p>香港 23:25 起飞，次日 06:20 抵达法兰克福，再转机前往卢森堡。</p>
-                <a href="https://www.google.com/maps/search/?api=1&query=Hong%20Kong%20International%20Airport" target="_blank" rel="noreferrer">
+                <span class="city-label" id="dailyTransportRoute">HONG KONG → FRANKFURT</span>
+                <h4 id="dailyTransportName">搭乘 LH797 出发</h4>
+                <p id="dailyTransportDescription">香港 23:25 起飞，次日 06:20 抵达法兰克福，再转机前往卢森堡。</p>
+                <a id="dailyTransportMap" href="https://www.google.com/maps/search/?api=1&query=Hong%20Kong%20International%20Airport" target="_blank" rel="noreferrer">
                   <i data-lucide="map-pin"></i>
                   打开地图
                 </a>

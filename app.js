@@ -174,6 +174,106 @@ const itinerary = [
   }
 ];
 
+const dailyTransportHighlights = {
+  "2026-09-29": {
+    time: "23:25",
+    route: "HONG KONG → FRANKFURT",
+    title: "搭乘 LH797 出发",
+    description: "香港 23:25 起飞，次日 06:20 抵达法兰克福，再转机前往卢森堡。",
+    query: "Hong Kong International Airport",
+    mode: "flight"
+  },
+  "2026-09-30": {
+    time: "13:10",
+    route: "FRANKFURT → LUXEMBOURG",
+    title: "搭乘 LH5642 前往卢森堡",
+    description: "06:20 抵达法兰克福；13:10 起飞，14:00 抵达卢森堡。City Walk 仅在入境和航班状态允许时执行。",
+    query: "Frankfurt Airport",
+    mode: "flight"
+  },
+  "2026-10-01": {
+    time: "13:25",
+    route: "LUXEMBOURG → BARCELONA",
+    title: "搭乘 FR3109 前往巴塞罗那",
+    description: "建议 11:00 前往卢森堡机场；13:25 起飞，15:20 抵达巴塞罗那。",
+    query: "Luxembourg Airport",
+    mode: "flight"
+  },
+  "2026-10-02": {
+    time: "全天",
+    route: "BARCELONA · NO TRANSFER",
+    title: "今日无跨城交通",
+    description: "全天使用地铁与步行游览；下一段 VY1812 将于明日 07:30 起飞。",
+    query: "Barcelona",
+    mode: "stay"
+  },
+  "2026-10-03": {
+    time: "07:30",
+    route: "BARCELONA → MUNICH",
+    title: "搭乘 VY1812 前往慕尼黑",
+    description: "07:30 从巴塞罗那起飞，09:40 抵达慕尼黑；随后搭 S-Bahn 前往 Giesing。",
+    query: "Barcelona-El Prat Airport",
+    mode: "flight"
+  },
+  "2026-10-04": {
+    time: "09:19",
+    route: "MUNICH → ERFURT → JENA",
+    title: "搭乘 ICE1100 前往耶拿",
+    description: "09:19 从慕尼黑中央车站出发，11:44 抵达 Erfurt；11:52 换乘，12:20 抵达 Jena West。",
+    query: "Munich Hauptbahnhof",
+    mode: "train"
+  },
+  "2026-10-05": {
+    time: "08:10",
+    route: "JENA → PRAGUE",
+    title: "搭乘 FlixBus 前往布拉格",
+    description: "建议 07:40 抵达巴士站核对站台；08:10 出发，14:00 抵达 Prague Florenc。",
+    query: "Jena Bus Station",
+    mode: "bus"
+  },
+  "2026-10-06": {
+    time: "全天",
+    route: "PRAGUE · NO TRANSFER",
+    title: "今日无跨城交通",
+    description: "全天使用电车、地铁与步行游览；下一段 RegioJet 将于明日 12:30 出发。",
+    query: "Prague",
+    mode: "stay"
+  },
+  "2026-10-07": {
+    time: "12:30",
+    route: "PRAGUE → DRESDEN",
+    title: "搭乘 RegioJet 前往德累斯顿",
+    description: "退房后先寄存行李；12:30 从布拉格出发，14:25 抵达 Dresden Hauptbahnhof。",
+    query: "Prague Main Station",
+    mode: "bus"
+  },
+  "2026-10-08": {
+    time: "18:00",
+    route: "DRESDEN → LUXEMBOURG",
+    title: "搭乘 FlixBus 夜巴前往卢森堡",
+    description: "15:30 开始取行李并补给；18:00 出发，次日 03:45 抵达 Luxembourg Gare。",
+    query: "Dresden Hauptbahnhof",
+    mode: "bus"
+  },
+  "2026-10-09": {
+    time: "10:15",
+    route: "LUXEMBOURG → ZURICH → HONG KONG",
+    title: "搭乘 LX751 转 LX138 返程",
+    description: "10:15 飞往苏黎世，11:15 抵达；22:30 搭乘 LX138 返回香港，18:15 开始返机场。",
+    query: "Luxembourg Airport",
+    mode: "flight"
+  }
+};
+
+const completedTransportHighlight = {
+  time: "16:35",
+  route: "ZURICH → HONG KONG",
+  title: "抵达香港 · 行程完成",
+  description: "LX138 于 10 月 10 日香港时间 16:35 抵达；完成入境、取行李并返家。",
+  query: "Hong Kong International Airport",
+  mode: "complete"
+};
+
 const cityProfiles = [
   {
     id: "frankfurt",
@@ -1617,6 +1717,62 @@ function setupCustomItinerary() {
   generateCustomPlan();
 }
 
+function localDateKey(date = new Date()) {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
+function dailyTransportDateKey() {
+  const previewDate = new URLSearchParams(window.location.search).get("previewDate");
+  const isLocalPreview = window.location.hostname === "127.0.0.1" || window.location.hostname === "localhost";
+  return isLocalPreview && /^2026-(09|10)-\d{2}$/.test(previewDate || "") ? previewDate : localDateKey();
+}
+
+function formatTripDate(dateKey) {
+  const [, month, day] = dateKey.split("-");
+  return `${Number(month)} 月 ${Number(day)} 日`;
+}
+
+function renderDailyTransport() {
+  const currentDate = dailyTransportDateKey();
+  const firstTravelDate = "2026-09-29";
+  const lastTravelDate = "2026-10-09";
+  let heading;
+  let displayDate;
+  let highlight;
+
+  if (currentDate < firstTravelDate) {
+    heading = "出发日";
+    displayDate = firstTravelDate;
+    highlight = dailyTransportHighlights[firstTravelDate];
+  } else if (currentDate <= lastTravelDate) {
+    heading = "今日交通";
+    displayDate = currentDate;
+    highlight = dailyTransportHighlights[currentDate];
+  } else {
+    heading = "行程完成";
+    displayDate = "2026-10-10";
+    highlight = completedTransportHighlight;
+  }
+
+  if (!highlight) return;
+  const dateLabel = formatTripDate(displayDate);
+  const dateElement = document.getElementById("dailyTransportDate");
+  const card = document.getElementById("dailyTransportCard");
+  document.getElementById("dailyTransportTitle").textContent = heading;
+  dateElement.dateTime = displayDate;
+  dateElement.textContent = dateLabel;
+  document.getElementById("dailyTransportTime").textContent = highlight.time;
+  document.getElementById("dailyTransportRoute").textContent = highlight.route;
+  document.getElementById("dailyTransportName").textContent = highlight.title;
+  document.getElementById("dailyTransportDescription").textContent = highlight.description;
+  document.getElementById("dailyTransportMap").href = mapsUrl(highlight.query);
+  card.dataset.mode = highlight.mode;
+  card.setAttribute("aria-label", `${dateLabel}${highlight.title}`);
+}
+
 function updateCountdown() {
   const start = new Date("2026-09-29T23:25:00+08:00");
   const end = new Date("2026-10-10T16:35:00+08:00");
@@ -2263,6 +2419,7 @@ function setupShare() {
   });
 }
 
+renderDailyTransport();
 updateCountdown();
 renderFlights();
 renderCitySwitcher();
@@ -2286,3 +2443,4 @@ refreshIcons();
 setupFlightCarousel();
 window.setInterval(updateFlightCountdowns, 1000);
 window.setInterval(updateCountdown, 60000);
+window.setInterval(renderDailyTransport, 60000);
