@@ -441,6 +441,105 @@ const cityProfiles = [
   }
 ];
 
+const cityExperiences = {
+  frankfurt: [
+    { name: "罗马广场与新老城晨间漫步", type: "转机首选", note: "用最短动线看木筋建筑、市政厅与重建街区。", query: "Römerberg Frankfurt" },
+    { name: "登上铁桥看美因河天际线", type: "城市景观", note: "从老城步行数分钟，同时看到教堂与金融区。", query: "Eiserner Steg Frankfurt" },
+    { name: "逛 Kleinmarkthalle 市场", type: "在地美食", note: "适合快速早餐或补给，先核对当天营业时间。", query: "Kleinmarkthalle Frankfurt" },
+    { name: "走进法兰克福大教堂", type: "历史建筑", note: "与罗马广场顺路，短停也能完成的建筑重点。", query: "Frankfurt Cathedral" },
+    { name: "在施泰德博物馆看欧洲艺术", type: "博物馆", note: "馆藏体量大，只有延长停留时再安排。", query: "Städel Museum Frankfurt" },
+    { name: "从 Main Tower 俯瞰金融区", type: "城市景观", note: "传统老城与摩天楼对照最直观的视角。", query: "Main Tower Frankfurt" },
+    { name: "参观歌德故居", type: "文化历史", note: "了解歌德成长环境，适合文学与室内建筑兴趣。", query: "Goethe House Frankfurt" },
+    { name: "沿博物馆河岸散步", type: "城市漫步", note: "天气好时沿河串联桥梁、博物馆与城市轮廓。", query: "Museumsufer Frankfurt" },
+    { name: "在萨克森豪森尝苹果酒", type: "饮食文化", note: "完整停留时体验本地酒馆，转机日不饮酒。", query: "Alt-Sachsenhausen Frankfurt" },
+    { name: "从老歌剧院走到金融区", type: "建筑路线", note: "古典立面、公共空间与现代塔楼连续出现。", query: "Alte Oper Frankfurt" }
+  ],
+  luxembourg: [
+    { name: "沿 Corniche 俯瞰 Grund", type: "城市首选", note: "高低城关系最清楚的一段步行，也是经典摄影位。", query: "Chemin de la Corniche Luxembourg" },
+    { name: "探索博克炮台", type: "世界遗产", note: "穿行地下防御系统，开放时段需在出发前核对。", query: "Bock Casemates Luxembourg" },
+    { name: "漫步 Grund 河谷低城", type: "城市漫步", note: "沿阿尔泽特河看桥梁、修道院与山崖上的老城。", query: "Grund Luxembourg" },
+    { name: "乘 Pfaffenthal 全景电梯", type: "城市景观", note: "免费连接高低城，用很少体力获得开阔视野。", query: "Pfaffenthal Panoramic Elevator" },
+    { name: "走 Wenzel 环线", type: "建筑路线", note: "串联城墙、塔楼与河谷，适合半日深度步行。", query: "Wenzel Walk Luxembourg" },
+    { name: "看大公宫与老城广场", type: "历史建筑", note: "在紧凑市中心观察王室建筑与城市日常。", query: "Grand Ducal Palace Luxembourg" },
+    { name: "参观 Mudam 与三橡果堡", type: "当代艺术", note: "贝聿铭建筑与旧堡垒形成鲜明对话。", query: "Mudam Luxembourg" },
+    { name: "走进圣母主教座堂", type: "宗教建筑", note: "哥特结构与后期装饰并存，可与金色女郎纪念碑串联。", query: "Notre Dame Cathedral Luxembourg" },
+    { name: "在国家历史与艺术博物馆看城史", type: "博物馆", note: "雨天理解卢森堡城市演变的稳妥选择。", query: "Nationalmusée um Fëschmaart Luxembourg" },
+    { name: "在老城尝一顿卢森堡菜", type: "在地美食", note: "从肉类炖菜或季节菜单入手，不为热门店久候。", query: "Place d'Armes Luxembourg restaurants" }
+  ],
+  barcelona: [
+    { name: "进入圣家堂感受光与结构", type: "建筑首选", note: "全程优先级最高，务必通过官方渠道预约。", query: "Sagrada Familia Barcelona" },
+    { name: "从圣家堂步行到圣保罗医院", type: "现代主义", note: "把高迪与多梅内克的代表作连成一条建筑线。", query: "Recinte Modernista de Sant Pau" },
+    { name: "夜看米拉之家或巴特罗之家", type: "建筑体验", note: "选择一处深入参观，避免同日重复排队。", query: "Casa Batlló Barcelona" },
+    { name: "清晨走进桂尔公园", type: "建筑景观", note: "早时段人流较少，可同时看马赛克与城市全景。", query: "Park Güell Barcelona" },
+    { name: "穿行哥特区的小巷与广场", type: "城市漫步", note: "从主教座堂一路走向 El Born，避开过度商业化支路。", query: "Gothic Quarter Barcelona" },
+    { name: "在毕加索博物馆看早期作品", type: "博物馆", note: "适合与 El Born 连排，提前核对预约时段。", query: "Museu Picasso Barcelona" },
+    { name: "从 MNAC 台阶看城市日落", type: "城市景观", note: "蒙锥克的视野适合放在傍晚，留意返程时间。", query: "Museu Nacional d'Art de Catalunya" },
+    { name: "逛 Sant Antoni 市场并吃午餐", type: "在地美食", note: "比兰布拉大道更贴近日常，也靠近你的住宿区域。", query: "Mercat de Sant Antoni Barcelona" },
+    { name: "沿 Barceloneta 海边散步", type: "滨海体验", note: "放在傍晚并轻装前往，手机和钱包始终贴身。", query: "Barceloneta Beach" },
+    { name: "在 El Born 体验塔帕斯与夜生活", type: "夜生活", note: "选择一个区域停留，返程使用正规出租车或地铁。", query: "El Born Barcelona" }
+  ],
+  munich: [
+    { name: "从玛利亚广场开始老城漫步", type: "城市首选", note: "新市政厅、圣母教堂与步行街都在短距离内。", query: "Marienplatz Munich" },
+    { name: "参观慕尼黑王宫", type: "宫殿博物馆", note: "用一处建筑理解巴伐利亚王室历史与收藏。", query: "Munich Residenz" },
+    { name: "在现代绘画陈列馆看设计与艺术", type: "博物馆", note: "建筑、设计与现代艺术最贴合本次兴趣。", query: "Pinakothek der Moderne" },
+    { name: "专题式逛德意志博物馆", type: "科技博物馆", note: "馆区很大，提前选航空、交通或科学展区。", query: "Deutsches Museum Munich" },
+    { name: "在谷物市场吃一顿巴伐利亚午餐", type: "在地美食", note: "适合老城动线中途补给，节庆日避免久候。", query: "Viktualienmarkt Munich" },
+    { name: "走进阿萨姆教堂", type: "巴洛克建筑", note: "空间不大但装饰密度极高，可快速加入老城路线。", query: "Asamkirche Munich" },
+    { name: "在英国花园看河道冲浪", type: "城市生活", note: "从 Eisbachwelle 感受慕尼黑独特的公共空间。", query: "Eisbachwelle Munich" },
+    { name: "参观 BMW Welt 与建筑群", type: "工业设计", note: "适合汽车与现代建筑兴趣，可与奥林匹克公园串联。", query: "BMW Welt Munich" },
+    { name: "感受啤酒节城市氛围", type: "季节限定", note: "2026 场次和开放安排需核对，人流过大时及时取消。", query: "Theresienwiese Munich" },
+    { name: "在 Glockenbachviertel 度过夜晚", type: "夜生活", note: "餐吧密集、回程方便，适合朋友聚会后短暂停留。", query: "Glockenbachviertel Munich" }
+  ],
+  jena: [
+    { name: "在蔡司天文馆看一场节目", type: "城市首选", note: "最能代表耶拿光学传统，提前确认语言和场次。", query: "Zeiss Planetarium Jena" },
+    { name: "登 JenTower 看山谷城市", type: "城市景观", note: "从高处理解耶拿被山地包围的城市格局。", query: "JenTower Jena" },
+    { name: "参观德国光学博物馆", type: "科学博物馆", note: "主题与城市高度相关，必须临行确认重开进度。", query: "Deutsches Optisches Museum Jena" },
+    { name: "在集市广场观察城市日常", type: "老城漫步", note: "市政厅、大学氛围和餐饮集中，适合慢慢停留。", query: "Marktplatz Jena" },
+    { name: "走进耶拿植物园", type: "自然科学", note: "规模紧凑，可与天文馆和市中心安排在一起。", query: "Botanical Garden Jena" },
+    { name: "探访席勒花园故居", type: "文学历史", note: "用一处安静庭院连接席勒与耶拿的文化记忆。", query: "Schillers Gartenhaus Jena" },
+    { name: "在浪漫主义之家看专题展", type: "博物馆", note: "小体量、主题明确，是下雨时的合适选择。", query: "Romantikerhaus Jena" },
+    { name: "沿萨勒河散步", type: "城市自然", note: "从密集市中心切换到河岸与山谷风景。", query: "Paradiespark Jena" },
+    { name: "走上 Landgrafen 看日落", type: "轻徒步", note: "天气和体力允许时选择，穿防滑鞋并在天黑前下山。", query: "Landgrafen Jena" },
+    { name: "到 Café Wagner 看当晚节目", type: "学生夜生活", note: "按演出日历决定，结束后沿主路返回住处。", query: "Café Wagner Jena" }
+  ],
+  prague: [
+    { name: "清晨走过查理大桥", type: "城市首选", note: "避开正午人潮，看伏尔塔瓦河与城堡天际线。", query: "Charles Bridge Prague" },
+    { name: "从布拉格城堡走进圣维特大教堂", type: "世界遗产", note: "从高处开始向河边下行，更省体力也更顺路。", query: "Prague Castle" },
+    { name: "穿行小城区与坎帕岛", type: "城市漫步", note: "巴洛克街区、河岸与公共艺术集中在一条慢行线。", query: "Kampa Island Prague" },
+    { name: "看老城广场与天文钟报时", type: "历史城市", note: "短暂停留感受广场尺度，注意人群中的随身物。", query: "Prague Astronomical Clock" },
+    { name: "走读犹太区历史", type: "文化历史", note: "犹太博物馆各场馆分散，提前规划联票与开放时间。", query: "Jewish Museum in Prague" },
+    { name: "在黑圣母之屋看捷克立体主义", type: "建筑博物馆", note: "建筑、家具与咖啡馆可组合成完整主题体验。", query: "House of the Black Madonna Prague" },
+    { name: "参观贸易展览宫的现代艺术", type: "博物馆", note: "功能主义建筑与国家美术馆收藏兼得。", query: "Trade Fair Palace Prague" },
+    { name: "在 Letná 公园看日落", type: "城市景观", note: "俯瞰多座桥梁，傍晚注意保暖与下坡路面。", query: "Letná Park Prague" },
+    { name: "在 Vinohrady 吃捷克菜", type: "在地美食", note: "离住宿区域近，比老城核心区更适合从容用餐。", query: "Vinohrady Prague restaurants" },
+    { name: "听一场爵士或逛 Náplavka 河岸", type: "夜生活", note: "查看当天节目，拒绝街头招徕与不明换汇。", query: "Náplavka Prague" }
+  ],
+  dresden: [
+    { name: "参观茨温格宫与古代大师画廊", type: "城市首选", note: "建筑与艺术收藏同时满足，优先确认开放馆区。", query: "Zwinger Dresden" },
+    { name: "在王宫看绿穹珍宝馆", type: "博物馆", note: "历史绿穹常需定时票，务必提前通过官方渠道确认。", query: "Green Vault Dresden" },
+    { name: "进入圣母教堂理解城市重建", type: "历史建筑", note: "从建筑细节看战争破坏、保留材料与重建过程。", query: "Frauenkirche Dresden" },
+    { name: "沿布吕尔平台眺望易北河", type: "城市景观", note: "可与老城核心景点连成不绕路的河岸步行线。", query: "Brühl's Terrace Dresden" },
+    { name: "看森帕歌剧院的建筑细节", type: "建筑体验", note: "没有演出票也可外观参观，导览场次需提前核对。", query: "Semperoper Dresden" },
+    { name: "在 Albertinum 看近现代艺术", type: "博物馆", note: "靠近河岸，是雨天或临时调整时的稳妥选择。", query: "Albertinum Dresden" },
+    { name: "寻找王侯出征图的历史人物", type: "城市细节", note: "巨幅瓷砖壁画位于老城主线，适合短停细看。", query: "Fürstenzug Dresden" },
+    { name: "穿行 Kunsthofpassage 艺术庭院", type: "创意街区", note: "从老城切换到 Neustadt 的当代生活与小店。", query: "Kunsthofpassage Dresden" },
+    { name: "在外新城吃饭并体验夜生活", type: "夜生活", note: "以住宿周边主街为活动范围，夜间按原路返回。", query: "Äußere Neustadt Dresden" },
+    { name: "到蓝色奇迹桥看易北河谷", type: "城市远景", note: "只在时间充裕时前往，夜巴当日需为取行李留足余量。", query: "Blue Wonder Bridge Dresden" }
+  ],
+  zurich: [
+    { name: "从中央车站沿班霍夫大街走向湖边", type: "转机首选", note: "路线清晰、不易超时，能快速感受城市中心。", query: "Bahnhofstrasse Zurich" },
+    { name: "在林登霍夫俯瞰利马特河", type: "城市景观", note: "从购物街稍作绕行即可到达，是老城最佳短停点。", query: "Lindenhof Zurich" },
+    { name: "穿行 Niederdorf 老城", type: "城市漫步", note: "沿步行街看窄巷、行会建筑与本地餐饮。", query: "Niederdorf Zurich" },
+    { name: "走进苏黎世大教堂", type: "历史建筑", note: "双塔是城市标志，可与河岸和老城顺路安排。", query: "Grossmünster Zürich" },
+    { name: "看圣母大教堂的夏加尔彩窗", type: "艺术建筑", note: "参观时间短但辨识度高，开放与票务需临行核对。", query: "Fraumünster Church Zurich" },
+    { name: "在苏黎世美术馆看瑞士艺术", type: "博物馆", note: "转机时间充足时的室内首选，不与国家博物馆同时安排。", query: "Kunsthaus Zürich" },
+    { name: "参观瑞士国家博物馆", type: "博物馆", note: "紧邻中央车站，天气差或时间收紧时最容易执行。", query: "Swiss National Museum Zürich" },
+    { name: "在 Bürkliplatz 看湖与远山", type: "湖畔体验", note: "从老城走到湖边后及时折返，不临时增加游船。", query: "Bürkliplatz Zurich" },
+    { name: "看柯布西耶馆的彩色建筑", type: "现代建筑", note: "与主线有距离，只在开放且时间明显富余时选择。", query: "Pavillon Le Corbusier Zurich" },
+    { name: "用瑞士甜点结束 City Walk", type: "在地美食", note: "在阅兵广场或老城快速休息，按计划时间返回机场。", query: "Paradeplatz Zurich confectionery" }
+  ]
+};
+
 const routeCityIds = ["frankfurt", "luxembourg", "barcelona", "munich", "jena", "prague", "dresden", "luxembourg", "zurich"];
 
 const practicalInfo = [
@@ -1389,6 +1488,7 @@ function selectCity(cityId, moveMap = false) {
   }));
   if (moveMap && cityMapInstance) cityMapInstance.panTo(city.coordinates, { animate: true });
   renderCityDetail();
+  renderCityExperiences();
 }
 
 function initCityMap() {
@@ -1432,22 +1532,22 @@ function initCityMap() {
   cityMapInstance.fitBounds(L.latLngBounds(routePoints).pad(0.12), { maxZoom: 5 });
 }
 
-function renderRanking() {
-  const ranked = [...cityProfiles].sort((a, b) => a.priority - b.priority);
-  document.getElementById("rankingList").innerHTML = ranked.map((city) => `
-    <button type="button" data-ranked-city="${city.id}" aria-label="查看第 ${city.priority} 名 ${escapeHtml(city.name)}">
-      <span class="ranking-number">${String(city.priority).padStart(2, "0")}</span>
-      <span class="ranking-copy"><strong>${escapeHtml(city.name)}</strong><small>${escapeHtml(city.fame)} · ${escapeHtml(city.season)} · ${escapeHtml(city.energy)} · ${escapeHtml(city.stay)}</small></span>
-      ${matchMeter(city.match)}
-      <i data-lucide="chevron-right"></i>
-    </button>
+function renderCityExperiences() {
+  const city = cityProfiles.find((item) => item.id === activeCityId) || cityProfiles[0];
+  const experiences = cityExperiences[city.id] || [];
+  document.getElementById("experienceCityLabel").textContent = city.name;
+  document.getElementById("experienceIntro").textContent = `${city.name}推荐体验按本次旅行偏好与可执行性排序；点击地点可直接打开地图。`;
+  document.getElementById("experienceList").innerHTML = experiences.map((experience, index) => `
+    <a class="experience-row" href="${mapsUrl(experience.query)}" target="_blank" rel="noreferrer" aria-label="在地图中打开 ${escapeHtml(experience.name)}">
+      <span class="experience-number">${String(index + 1).padStart(2, "0")}</span>
+      <span class="experience-copy">
+        <strong>${escapeHtml(experience.name)}</strong>
+        <small><span>${escapeHtml(experience.type)}</span>${escapeHtml(experience.note)}</small>
+      </span>
+      <span class="experience-map" title="打开地图"><i data-lucide="map-pin"></i></span>
+    </a>
   `).join("");
-  document.getElementById("rankingList").onclick = (event) => {
-    const button = event.target.closest("[data-ranked-city]");
-    if (!button) return;
-    selectCity(button.dataset.rankedCity, true);
-    document.getElementById("cityDetail").scrollIntoView({ behavior: "smooth", block: "start" });
-  };
+  refreshIcons();
 }
 
 function renderPracticalInfo() {
@@ -2167,7 +2267,7 @@ updateCountdown();
 renderFlights();
 renderCitySwitcher();
 renderCityDetail();
-renderRanking();
+renderCityExperiences();
 renderPracticalInfo();
 renderItinerary();
 renderBookings();

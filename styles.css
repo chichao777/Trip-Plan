@@ -1935,7 +1935,7 @@ h4 {
 }
 
 .map-section,
-.ranking-section,
+.experience-section,
 .practical-section,
 .audit-section {
   margin-top: 28px;
@@ -2259,7 +2259,7 @@ h4 {
 }
 
 .attraction-index,
-.ranking-number {
+.experience-number {
   color: var(--red);
   font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
   font-size: 12px;
@@ -2332,45 +2332,73 @@ h4 {
   color: var(--gold);
 }
 
-.ranking-list {
+.experience-list {
   margin-top: 10px;
   border-top: 1px solid var(--line);
 }
 
-.ranking-list > button {
+.experience-row {
   display: grid;
   width: 100%;
-  min-height: 68px;
-  grid-template-columns: 32px minmax(0, 1fr) auto 18px;
+  min-height: 72px;
+  grid-template-columns: 32px minmax(0, 1fr) 38px;
   align-items: center;
   gap: 10px;
   padding: 10px 0;
+  color: inherit;
   text-align: left;
-  border: 0;
   border-bottom: 1px solid var(--line);
-  background: transparent;
-  cursor: pointer;
+  text-decoration: none;
 }
 
-.ranking-copy strong,
-.ranking-copy small {
+.experience-copy {
+  min-width: 0;
+}
+
+.experience-copy strong,
+.experience-copy small {
   display: block;
 }
 
-.ranking-copy strong {
+.experience-copy strong {
   font-size: 13px;
 }
 
-.ranking-copy small {
-  margin-top: 3px;
+.experience-copy small {
+  margin-top: 4px;
   color: var(--muted);
   font-size: 10px;
-  line-height: 1.45;
+  line-height: 1.55;
 }
 
-.ranking-list > button > svg {
+.experience-copy small span {
+  display: inline-block;
+  margin-right: 7px;
+  color: var(--green);
+  font-weight: 800;
+}
+
+.experience-map {
+  display: grid;
+  width: 34px;
+  height: 34px;
+  place-items: center;
+  color: var(--green);
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  transition: color 160ms ease, border-color 160ms ease, background 160ms ease;
+}
+
+.experience-map svg {
   width: 16px;
-  color: var(--muted);
+  height: 16px;
+}
+
+.experience-row:hover .experience-map,
+.experience-row:focus-visible .experience-map {
+  color: #fff;
+  border-color: var(--green);
+  background: var(--green);
 }
 
 .practical-grid {
@@ -2886,14 +2914,6 @@ h4 {
 
   .city-facts div:last-child {
     border-bottom: 0;
-  }
-
-  .ranking-list > button {
-    grid-template-columns: 28px minmax(0, 1fr) 16px;
-  }
-
-  .ranking-list .match-meter {
-    display: none;
   }
 
   .generated-support .generated-safety {
