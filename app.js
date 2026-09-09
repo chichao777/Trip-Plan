@@ -1726,8 +1726,7 @@ function localDateKey(date = new Date()) {
 
 function dailyTransportDateKey() {
   const previewDate = new URLSearchParams(window.location.search).get("previewDate");
-  const isLocalPreview = window.location.hostname === "127.0.0.1" || window.location.hostname === "localhost";
-  return isLocalPreview && /^2026-(09|10)-\d{2}$/.test(previewDate || "") ? previewDate : localDateKey();
+  return /^2026-(09|10)-\d{2}$/.test(previewDate || "") ? previewDate : localDateKey();
 }
 
 function formatTripDate(dateKey) {
