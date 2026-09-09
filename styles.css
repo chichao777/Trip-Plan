@@ -131,7 +131,7 @@ a {
   display: flex;
   align-items: center;
   gap: 10px;
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 800;
 }
 
@@ -175,7 +175,7 @@ a {
 .hero__eyebrow {
   margin: 0 0 10px;
   color: rgba(255, 255, 255, 0.84);
-  font-size: 13px;
+  font-size: 15px;
   font-weight: 700;
 }
 
@@ -218,7 +218,7 @@ a {
 
 .countdown span {
   margin-top: 5px;
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 700;
 }
 
@@ -252,7 +252,7 @@ main {
 .section-kicker {
   margin: 0 0 5px;
   color: var(--green);
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 900;
 }
 
@@ -290,7 +290,7 @@ h4 {
   border-radius: 6px;
   outline: 0;
   background: var(--paper);
-  font-size: 11px;
+  font-size: 13px;
   white-space: nowrap;
   cursor: pointer;
 }
@@ -378,7 +378,7 @@ h4 {
   display: block;
   margin-bottom: 7px;
   color: var(--muted);
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 800;
 }
 
@@ -413,7 +413,7 @@ h4 {
   gap: 7px;
   padding: 8px 13px;
   border-radius: 6px;
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 800;
   cursor: pointer;
 }
@@ -468,13 +468,13 @@ h4 {
 
 .sync-account__identity small {
   color: var(--muted);
-  font-size: 10px;
+  font-size: 12px;
 }
 
 .sync-account__identity strong {
   margin-top: 2px;
   overflow-wrap: anywhere;
-  font-size: 13px;
+  font-size: 15px;
 }
 
 .sync-account__actions {
@@ -493,7 +493,7 @@ h4 {
   padding-top: 14px;
   color: var(--muted);
   border-top: 1px solid var(--line);
-  font-size: 11px;
+  font-size: 13px;
 }
 
 .sync-dialog__status svg {
@@ -564,7 +564,7 @@ h4 {
 .metric span {
   margin-top: 7px;
   color: var(--muted);
-  font-size: 11px;
+  font-size: 13px;
 }
 
 .route-section,
@@ -577,7 +577,7 @@ h4 {
 .subheading-row > span,
 .subheading-row > time {
   color: var(--muted);
-  font-size: 12px;
+  font-size: 14px;
 }
 
 .text-button {
@@ -589,7 +589,7 @@ h4 {
   color: var(--green);
   border: 0;
   background: transparent;
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 800;
   cursor: pointer;
 }
@@ -636,7 +636,7 @@ h4 {
   place-items: center;
   color: #fff;
   border-radius: 50%;
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 900;
 }
 
@@ -646,7 +646,7 @@ h4 {
 }
 
 .route-stop strong {
-  font-size: 13px;
+  font-size: 15px;
   line-height: 1.35;
   white-space: nowrap;
 }
@@ -654,7 +654,7 @@ h4 {
 .route-stop small {
   margin-top: 3px;
   color: var(--muted);
-  font-size: 10px;
+  font-size: 12px;
 }
 
 .route-stop--green span { background: var(--green); }
@@ -691,7 +691,7 @@ h4 {
   gap: 8px;
   margin-top: 16px;
   color: var(--muted);
-  font-size: 11px;
+  font-size: 13px;
 }
 
 .day-trip-strip a {
@@ -762,7 +762,7 @@ h4 {
 .next-action small {
   margin-bottom: 3px;
   color: var(--muted);
-  font-size: 11px;
+  font-size: 13px;
 }
 
 .next-action strong {
@@ -784,7 +784,7 @@ h4 {
 .flight-controls > span {
   min-width: 38px;
   color: var(--muted);
-  font-size: 11px;
+  font-size: 13px;
   text-align: center;
 }
 
@@ -860,19 +860,19 @@ h4 {
 
 .flight-card__sequence {
   color: rgba(255, 255, 255, 0.82);
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 800;
 }
 
 .flight-card__airline {
   margin-top: 5px;
   color: rgba(255, 255, 255, 0.5);
-  font-size: 9px;
+  font-size: 11px;
 }
 
 .flight-card__number {
   color: #9ccfd0;
-  font-size: 12px;
+  font-size: 14px;
 }
 
 .flight-card__route {
@@ -901,7 +901,7 @@ h4 {
 .flight-point span {
   margin-top: 5px;
   color: rgba(255, 255, 255, 0.66);
-  font-size: 10px;
+  font-size: 12px;
 }
 
 .flight-point::after {
@@ -947,7 +947,7 @@ h4 {
 
 .flight-path span {
   color: rgba(255, 255, 255, 0.58);
-  font-size: 9px;
+  font-size: 11px;
   white-space: nowrap;
 }
 
@@ -974,12 +974,12 @@ h4 {
 
 .flight-card__schedule span {
   color: rgba(255, 255, 255, 0.5);
-  font-size: 9px;
+  font-size: 11px;
 }
 
 .flight-card__schedule strong {
   margin-top: 4px;
-  font-size: 10px;
+  font-size: 12px;
 }
 
 .flight-card__airports {
@@ -988,7 +988,7 @@ h4 {
   gap: 7px;
   margin: 10px 0 0;
   color: rgba(255, 255, 255, 0.5);
-  font-size: 9px;
+  font-size: 11px;
   line-height: 1.45;
 }
 
@@ -1013,7 +1013,7 @@ h4 {
 
 .flight-countdown span {
   color: rgba(255, 255, 255, 0.58);
-  font-size: 9px;
+  font-size: 11px;
 }
 
 .flight-countdown strong {
@@ -1056,7 +1056,7 @@ h4 {
 
 .city-label {
   color: #a9d2c5;
-  font-size: 9px;
+  font-size: 11px;
   font-weight: 900;
 }
 
@@ -1067,7 +1067,7 @@ h4 {
 .spotlight-card p {
   margin: 8px 0 13px;
   color: rgba(255, 255, 255, 0.76);
-  font-size: 12px;
+  font-size: 14px;
   line-height: 1.55;
 }
 
@@ -1077,7 +1077,7 @@ h4 {
   align-items: center;
   gap: 6px;
   color: #fff;
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 800;
   text-decoration: none;
 }
@@ -1094,7 +1094,7 @@ h4 {
 .page-header p:last-child {
   margin: 8px 0 0;
   color: var(--muted);
-  font-size: 13px;
+  font-size: 15px;
   line-height: 1.5;
 }
 
@@ -1137,7 +1137,7 @@ h4 {
 }
 
 .day-chip span {
-  font-size: 10px;
+  font-size: 12px;
 }
 
 .day-chip.is-active {
@@ -1194,7 +1194,7 @@ h4 {
 
 .day-plan__head time {
   color: var(--muted);
-  font-size: 11px;
+  font-size: 13px;
   white-space: nowrap;
 }
 
@@ -1208,7 +1208,7 @@ h4 {
   gap: 8px;
   margin: 0 0 12px;
   color: var(--blue);
-  font-size: 12px;
+  font-size: 14px;
   line-height: 1.5;
 }
 
@@ -1238,7 +1238,7 @@ h4 {
 
 .activity time {
   color: var(--muted);
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 700;
 }
 
@@ -1248,14 +1248,14 @@ h4 {
 }
 
 .activity strong {
-  font-size: 13px;
+  font-size: 15px;
   line-height: 1.3;
 }
 
 .activity small {
   margin-top: 3px;
   color: var(--muted);
-  font-size: 10px;
+  font-size: 12px;
 }
 
 .activity a {
@@ -1296,7 +1296,7 @@ h4 {
 
 .booking-summary span {
   color: var(--muted);
-  font-size: 10px;
+  font-size: 12px;
 }
 
 .booking-summary strong {
@@ -1338,7 +1338,7 @@ h4 {
 .booking-card__city {
   margin: 0 0 3px;
   color: var(--muted);
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 900;
 }
 
@@ -1355,7 +1355,7 @@ h4 {
   border: 1px solid #e8cf91;
   border-radius: 6px;
   background: var(--gold-soft);
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 900;
   cursor: pointer;
 }
@@ -1380,12 +1380,12 @@ h4 {
 
 .booking-meta span {
   color: var(--muted);
-  font-size: 10px;
+  font-size: 12px;
 }
 
 .booking-meta strong {
   margin-top: 3px;
-  font-size: 12px;
+  font-size: 14px;
 }
 
 .booking-address {
@@ -1396,7 +1396,7 @@ h4 {
   padding-top: 12px;
   color: var(--muted);
   border-top: 1px solid var(--line);
-  font-size: 11px;
+  font-size: 13px;
   line-height: 1.5;
 }
 
@@ -1438,12 +1438,12 @@ h4 {
 }
 
 .safety-note strong {
-  font-size: 12px;
+  font-size: 14px;
 }
 
 .safety-note span {
   margin-top: 3px;
-  font-size: 11px;
+  font-size: 13px;
   line-height: 1.5;
 }
 
@@ -1463,7 +1463,7 @@ h4 {
   border: 0;
   border-radius: 4px;
   background: transparent;
-  font-size: 13px;
+  font-size: 15px;
   font-weight: 800;
   cursor: pointer;
 }
@@ -1527,14 +1527,14 @@ h4 {
 }
 
 .check-item__copy strong {
-  font-size: 13px;
+  font-size: 15px;
   line-height: 1.4;
 }
 
 .check-item__copy span {
   margin-top: 3px;
   color: var(--muted);
-  font-size: 10px;
+  font-size: 12px;
   line-height: 1.4;
 }
 
@@ -1549,7 +1549,7 @@ h4 {
   color: var(--blue);
   border-radius: 4px;
   background: var(--blue-soft);
-  font-size: 9px;
+  font-size: 11px;
   font-weight: 800;
   text-align: center;
 }
@@ -1642,7 +1642,7 @@ h4 {
   border: 1px solid var(--line);
   border-radius: 6px;
   background: #fff;
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 800;
   cursor: pointer;
 }
@@ -1659,7 +1659,7 @@ h4 {
   align-items: center;
   gap: 10px;
   color: var(--muted);
-  font-size: 11px;
+  font-size: 13px;
 }
 
 .checklist--packing {
@@ -1721,7 +1721,7 @@ h4 {
   align-items: center;
   gap: 10px;
   color: var(--muted);
-  font-size: 11px;
+  font-size: 13px;
 }
 
 .memo-progress > div {
@@ -1760,7 +1760,7 @@ h4 {
   outline: 0;
   opacity: 1;
   background: transparent;
-  font-size: 13px;
+  font-size: 15px;
   line-height: 1.4;
 }
 
@@ -1778,7 +1778,7 @@ h4 {
 .memo-empty {
   margin: 28px 0 8px;
   color: var(--muted);
-  font-size: 12px;
+  font-size: 14px;
   text-align: center;
 }
 
@@ -1798,7 +1798,7 @@ h4 {
   min-height: 50px;
   padding: 8px 0;
   border-bottom: 1px solid var(--line);
-  font-size: 13px;
+  font-size: 15px;
   text-decoration: none;
 }
 
@@ -1811,7 +1811,7 @@ h4 {
   padding: 18px 20px 30px;
   color: #75807c;
   background: #f7f9f8;
-  font-size: 10px;
+  font-size: 12px;
   line-height: 1.6;
 }
 
@@ -1863,7 +1863,7 @@ h4 {
 }
 
 .bottom-nav span {
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 700;
 }
 
@@ -1882,7 +1882,7 @@ h4 {
   color: #fff;
   border-radius: 6px;
   background: #17201d;
-  font-size: 12px;
+  font-size: 14px;
   opacity: 0;
   pointer-events: none;
   transform: translate(-50%, 10px);
@@ -1904,7 +1904,7 @@ h4 {
 .section-note {
   margin: 14px 0 0;
   color: var(--muted);
-  font-size: 12px;
+  font-size: 14px;
   line-height: 1.65;
 }
 
@@ -1925,7 +1925,7 @@ h4 {
   border: 1px solid #bfd0ca;
   border-radius: 5px;
   background: #f6faf8;
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 800;
 }
 
@@ -1952,7 +1952,7 @@ h4 {
 }
 
 .city-map .leaflet-control-attribution {
-  font-size: 9px;
+  font-size: 11px;
 }
 
 .city-map img.leaflet-tile {
@@ -1964,7 +1964,7 @@ h4 {
   border: 0;
   border-radius: 4px;
   box-shadow: 0 2px 8px rgba(23, 32, 29, 0.18);
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 800;
 }
 
@@ -1996,7 +1996,7 @@ h4 {
 }
 
 .map-unavailable span {
-  font-size: 11px;
+  font-size: 13px;
 }
 
 .city-switcher {
@@ -2030,13 +2030,13 @@ h4 {
 }
 
 .city-switcher strong {
-  font-size: 12px;
+  font-size: 14px;
 }
 
 .city-switcher span {
   margin-top: 2px;
   color: var(--muted);
-  font-size: 9px;
+  font-size: 11px;
 }
 
 .city-switcher button.is-active {
@@ -2083,7 +2083,7 @@ h4 {
   color: #fff;
   border-radius: 4px;
   background: rgba(11, 21, 18, 0.76);
-  font-size: 9px;
+  font-size: 11px;
 }
 
 .city-visual figcaption a {
@@ -2102,7 +2102,7 @@ h4 {
 .city-detail__heading > div:first-child > span,
 .generated-plan__head span {
   color: var(--green);
-  font-size: 9px;
+  font-size: 11px;
   font-weight: 900;
 }
 
@@ -2122,7 +2122,7 @@ h4 {
   display: block;
   margin-bottom: 5px;
   color: var(--muted);
-  font-size: 9px;
+  font-size: 11px;
 }
 
 .match-meter {
@@ -2149,7 +2149,7 @@ h4 {
 .city-summary {
   margin: 12px 0 0;
   color: #3d4945;
-  font-size: 13px;
+  font-size: 15px;
   line-height: 1.7;
 }
 
@@ -2182,12 +2182,12 @@ h4 {
 
 .city-facts span {
   color: var(--muted);
-  font-size: 9px;
+  font-size: 11px;
 }
 
 .city-facts strong {
   margin-top: 4px;
-  font-size: 11px;
+  font-size: 13px;
   line-height: 1.4;
 }
 
@@ -2205,7 +2205,7 @@ h4 {
   margin: 0;
   padding: 13px;
   background: #f4f8f6;
-  font-size: 11px;
+  font-size: 13px;
   line-height: 1.6;
 }
 
@@ -2262,7 +2262,7 @@ h4 {
 .experience-number {
   color: var(--red);
   font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 800;
 }
 
@@ -2272,13 +2272,13 @@ h4 {
 }
 
 .attraction-row strong {
-  font-size: 13px;
+  font-size: 15px;
 }
 
 .attraction-row small {
   margin-top: 4px;
   color: var(--muted);
-  font-size: 10px;
+  font-size: 12px;
   line-height: 1.5;
 }
 
@@ -2311,7 +2311,7 @@ h4 {
   gap: 10px;
   padding: 12px 0;
   border-bottom: 1px solid var(--line);
-  font-size: 11px;
+  font-size: 13px;
   line-height: 1.6;
 }
 
@@ -2361,13 +2361,13 @@ h4 {
 }
 
 .experience-copy strong {
-  font-size: 13px;
+  font-size: 15px;
 }
 
 .experience-copy small {
   margin-top: 4px;
   color: var(--muted);
-  font-size: 10px;
+  font-size: 12px;
   line-height: 1.55;
 }
 
@@ -2425,7 +2425,7 @@ h4 {
   gap: 12px;
   padding: 12px 0;
   border-bottom: 1px solid var(--line);
-  font-size: 11px;
+  font-size: 13px;
   line-height: 1.55;
 }
 
@@ -2440,7 +2440,7 @@ h4 {
   justify-content: center;
   padding: 4px 7px;
   border-radius: 4px;
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 900;
 }
 
@@ -2487,13 +2487,13 @@ h4 {
 }
 
 .itinerary-principle strong {
-  font-size: 12px;
+  font-size: 14px;
 }
 
 .itinerary-principle span {
   margin-top: 3px;
   color: var(--muted);
-  font-size: 10px;
+  font-size: 12px;
   line-height: 1.5;
 }
 
@@ -2510,12 +2510,12 @@ h4 {
 
 .day-mainline span {
   color: var(--muted);
-  font-size: 9px;
+  font-size: 11px;
 }
 
 .day-mainline strong {
   margin-top: 2px;
-  font-size: 13px;
+  font-size: 15px;
   line-height: 1.45;
 }
 
@@ -2538,12 +2538,12 @@ h4 {
 
 .day-meta span {
   color: var(--muted);
-  font-size: 9px;
+  font-size: 11px;
 }
 
 .day-meta strong {
   margin-top: 3px;
-  font-size: 11px;
+  font-size: 13px;
   line-height: 1.4;
 }
 
@@ -2575,7 +2575,7 @@ h4 {
   padding: 11px 0;
   color: var(--muted);
   border-bottom: 1px solid var(--line);
-  font-size: 10px;
+  font-size: 12px;
   line-height: 1.5;
 }
 
@@ -2616,7 +2616,7 @@ h4 {
   display: block;
   margin-bottom: 6px;
   color: var(--muted);
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 800;
 }
 
@@ -2667,14 +2667,14 @@ h4 {
 }
 
 .attraction-picker strong {
-  font-size: 11px;
+  font-size: 13px;
   line-height: 1.35;
 }
 
 .attraction-picker small {
   margin-top: 2px;
   color: var(--muted);
-  font-size: 9px;
+  font-size: 11px;
 }
 
 .primary-command {
@@ -2689,7 +2689,7 @@ h4 {
   border: 0;
   border-radius: 5px;
   background: var(--forest);
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 800;
   cursor: pointer;
 }
@@ -2719,7 +2719,7 @@ h4 {
 
 .generated-plan__head > strong {
   color: var(--red);
-  font-size: 11px;
+  font-size: 13px;
   white-space: nowrap;
 }
 
@@ -2729,7 +2729,7 @@ h4 {
   gap: 8px;
   margin: 12px 0;
   color: var(--blue);
-  font-size: 11px;
+  font-size: 13px;
   line-height: 1.5;
 }
 
@@ -2755,7 +2755,7 @@ h4 {
 .generated-step time {
   color: var(--red);
   font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 800;
 }
 
@@ -2765,13 +2765,13 @@ h4 {
 }
 
 .generated-step strong {
-  font-size: 12px;
+  font-size: 14px;
 }
 
 .generated-step small {
   margin-top: 3px;
   color: var(--muted);
-  font-size: 10px;
+  font-size: 12px;
   line-height: 1.4;
 }
 
@@ -2781,7 +2781,7 @@ h4 {
   padding: 10px;
   color: #704c0f;
   background: var(--gold-soft);
-  font-size: 11px;
+  font-size: 13px;
 }
 
 .generator-error {
@@ -2802,7 +2802,7 @@ h4 {
   padding: 10px 0;
   color: var(--muted);
   border-bottom: 1px solid var(--line);
-  font-size: 10px;
+  font-size: 12px;
   line-height: 1.5;
 }
 
@@ -2815,7 +2815,7 @@ h4 {
   display: block;
   margin-top: 12px;
   color: var(--muted);
-  font-size: 9px;
+  font-size: 11px;
   line-height: 1.5;
 }
 
@@ -2887,7 +2887,7 @@ h4 {
   }
 
   .route-stop strong {
-    font-size: 12px;
+    font-size: 14px;
   }
 
   .city-map {
