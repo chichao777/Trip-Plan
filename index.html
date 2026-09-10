@@ -16,7 +16,7 @@
     />
     <title>2026 国庆欧洲旅行计划</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="anonymous" />
-    <link rel="stylesheet" href="./styles.css?v=20260910-1" />
+    <link rel="stylesheet" href="./styles.css?v=20260910-2" />
   </head>
   <body>
     <div class="app-shell">
@@ -272,8 +272,11 @@
 
           <div class="prep-pane is-active" id="prep-tasks" data-prep-content="tasks">
             <div class="checklist" id="taskList"></div>
-            <form class="add-item" id="addTaskForm">
-              <input id="newTaskItem" type="text" maxlength="80" placeholder="新增出发前待办" aria-label="新增出发前待办" />
+            <form class="add-item add-item--packing" id="addTaskForm">
+              <div class="add-packing-fields">
+                <input id="newTaskItem" type="text" maxlength="80" placeholder="新增出发前待办" aria-label="新增出发前待办" />
+                <input id="newTaskNote" type="text" maxlength="100" placeholder="备注（可选）" aria-label="添加待办备注" />
+              </div>
               <button class="icon-button" type="submit" title="添加待办" aria-label="添加待办"><i data-lucide="plus"></i></button>
             </form>
           </div>
@@ -394,6 +397,6 @@
     <script src="./assets/lucide.min.js"></script>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin="anonymous"></script>
     <script src="./assets/supabase.min.js"></script>
-    <script src="./app.js?v=20260910-1"></script>
+    <script src="./app.js?v=20260910-2"></script>
   </body>
 </html>

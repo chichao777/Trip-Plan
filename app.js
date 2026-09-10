@@ -1076,10 +1076,12 @@ const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_LnoBI1cTWU9g5s2MZNtFng_Uffo24E7
 const defaultState = {
   tasks: {},
   taskEdits: {},
+  taskNoteEdits: {},
   deletedTasks: [],
   customTasks: [],
   packing: {},
   packingEdits: {},
+  packingBagEdits: {},
   packingNoteEdits: {},
   deletedPacking: [],
   bookings: {},
@@ -1146,12 +1148,14 @@ function normalizeState(saved = {}) {
     ...source,
     tasks: source.tasks && typeof source.tasks === "object" && !Array.isArray(source.tasks) ? source.tasks : {},
     taskEdits: source.taskEdits && typeof source.taskEdits === "object" && !Array.isArray(source.taskEdits) ? source.taskEdits : {},
+    taskNoteEdits: source.taskNoteEdits && typeof source.taskNoteEdits === "object" && !Array.isArray(source.taskNoteEdits) ? source.taskNoteEdits : {},
     deletedTasks: Array.isArray(source.deletedTasks) ? source.deletedTasks.map(String) : [],
     customTasks: Array.isArray(source.customTasks)
       ? source.customTasks.filter((item) => item && typeof item.task === "string")
       : [],
     packing: source.packing && typeof source.packing === "object" && !Array.isArray(source.packing) ? source.packing : {},
     packingEdits: source.packingEdits && typeof source.packingEdits === "object" && !Array.isArray(source.packingEdits) ? source.packingEdits : {},
+    packingBagEdits: source.packingBagEdits && typeof source.packingBagEdits === "object" && !Array.isArray(source.packingBagEdits) ? source.packingBagEdits : {},
     packingNoteEdits: source.packingNoteEdits && typeof source.packingNoteEdits === "object" && !Array.isArray(source.packingNoteEdits) ? source.packingNoteEdits : {},
     deletedPacking: Array.isArray(source.deletedPacking) ? source.deletedPacking.map(String) : [],
     bookings: source.bookings && typeof source.bookings === "object" && !Array.isArray(source.bookings) ? source.bookings : {},
@@ -2104,8 +2108,16 @@ function renderBookings() {
 function allPreflightTasks() {
   const builtIn = preflightTasks
     .filter((task) => !state.deletedTasks.includes(task.id))
-    .map((task) => ({ ...task, task: state.taskEdits[task.id] || task.task }));
-  return [...builtIn, ...state.customTasks];
+    .map((task) => ({
+      ...task,
+      task: state.taskEdits[task.id] || task.task,
+      note: Object.prototype.hasOwnProperty.call(state.taskNoteEdits, task.id) ? state.taskNoteEdits[task.id] : task.category
+    }));
+  const custom = state.customTasks.map((task) => ({
+    ...task,
+    note: typeof task.note === "string" ? task.note : (task.category || "")
+  }));
+  return [...builtIn, ...custom];
 }
 
 function renderTasks() {
@@ -2117,8 +2129,11 @@ function renderTasks() {
     const editing = editingTaskId === task.id;
     const inputId = `task-${task.id}`;
     const copy = editing
-      ? `<div class="check-item__copy"><input class="prep-edit-input" type="text" maxlength="80" value="${escapeHtml(task.task)}" data-task-edit-input="${escapeHtml(task.id)}" aria-label="编辑待办内容" /><span>${escapeHtml(task.category)}</span></div>`
-      : `<label class="check-item__copy" for="${escapeHtml(inputId)}"><strong>${escapeHtml(task.task)}</strong><span>${escapeHtml(task.category)}</span></label>`;
+      ? `<div class="check-item__copy prep-edit-fields">
+          <label class="prep-edit-field"><span>正文</span><input class="prep-edit-input" type="text" maxlength="80" value="${escapeHtml(task.task)}" data-task-edit-input="${escapeHtml(task.id)}" aria-label="编辑待办正文" /></label>
+          <label class="prep-edit-field"><span>备注</span><input class="prep-edit-input prep-edit-input--note" type="text" maxlength="100" value="${escapeHtml(task.note)}" data-task-note-input="${escapeHtml(task.id)}" placeholder="备注（可选）" aria-label="编辑待办备注" /></label>
+        </div>`
+      : `<label class="check-item__copy" for="${escapeHtml(inputId)}"><strong>${escapeHtml(task.task)}</strong>${task.note ? `<span>${escapeHtml(task.note)}</span>` : ""}</label>`;
     const actions = editing
       ? `<button class="prep-item-action" type="button" data-save-task="${escapeHtml(task.id)}" title="保存修改" aria-label="保存修改"><i data-lucide="check"></i></button>
          <button class="prep-item-action" type="button" data-cancel-task="${escapeHtml(task.id)}" title="取消修改" aria-label="取消修改"><i data-lucide="x"></i></button>`
@@ -2134,19 +2149,26 @@ function renderTasks() {
   }).join("");
 
   function commitTaskEdit(id) {
-    const input = list.querySelector("[data-task-edit-input]");
+    const input = list.querySelector(`[data-task-edit-input="${CSS.escape(id)}"]`);
+    const noteInput = list.querySelector(`[data-task-note-input="${CSS.escape(id)}"]`);
     const value = input?.value.trim();
+    const note = noteInput?.value.trim() || "";
     if (!value) {
       showToast("待办内容不能为空");
       input?.focus();
       return;
     }
     const custom = state.customTasks.find((task) => task.id === id);
-    if (custom) custom.task = value;
+    if (custom) {
+      custom.task = value;
+      custom.note = note;
+    }
     else {
       const original = preflightTasks.find((task) => task.id === id);
       if (original?.task === value) delete state.taskEdits[id];
       else state.taskEdits[id] = value;
+      if ((original?.category || "") === note) delete state.taskNoteEdits[id];
+      else state.taskNoteEdits[id] = note;
     }
     editingTaskId = null;
     saveState();
@@ -2187,6 +2209,7 @@ function renderTasks() {
       }
       delete state.tasks[id];
       delete state.taskEdits[id];
+      delete state.taskNoteEdits[id];
       editingTaskId = null;
       saveState();
       renderTasks();
@@ -2195,10 +2218,10 @@ function renderTasks() {
   };
 
   list.onkeydown = (event) => {
-    if (!event.target.matches("[data-task-edit-input]")) return;
+    if (!event.target.matches("[data-task-edit-input], [data-task-note-input]")) return;
     if (event.key === "Enter") {
       event.preventDefault();
-      commitTaskEdit(event.target.dataset.taskEditInput);
+      commitTaskEdit(event.target.dataset.taskEditInput || event.target.dataset.taskNoteInput);
     } else if (event.key === "Escape") {
       editingTaskId = null;
       renderTasks();
@@ -2270,13 +2293,14 @@ function allPackingItems() {
     .map((item) => ({
       ...item,
       item: state.packingEdits[item.id] || item.item,
+      bag: Object.prototype.hasOwnProperty.call(state.packingBagEdits, item.id) ? state.packingBagEdits[item.id] : item.bag,
       note: Object.prototype.hasOwnProperty.call(state.packingNoteEdits, item.id) ? state.packingNoteEdits[item.id] : item.note
     }));
   const custom = state.customPacking.map((item) => ({
     ...item,
     category: item.category || "自定义",
     qty: 1,
-    bag: "待安排",
+    bag: typeof item.bag === "string" ? item.bag : "待安排",
     note: typeof item.note === "string" ? item.note : ""
   }));
   return [...builtIn, ...custom];
@@ -2301,10 +2325,10 @@ function renderPacking() {
     const meta = [item.bag, item.note].filter(Boolean).join(" · ");
     const inputId = `packing-${item.id}`;
     const copy = editing
-      ? `<div class="check-item__copy packing-edit-fields">
-          <input class="prep-edit-input" type="text" maxlength="80" value="${escapeHtml(item.item)}" data-packing-edit-input="${escapeHtml(item.id)}" aria-label="编辑物品名称" />
-          <input class="prep-edit-input prep-edit-input--note" type="text" maxlength="100" value="${escapeHtml(item.note)}" data-packing-note-input="${escapeHtml(item.id)}" placeholder="备注（可选）" aria-label="编辑物品备注" />
-          <span>${escapeHtml(item.bag)}</span>
+      ? `<div class="check-item__copy prep-edit-fields">
+          <label class="prep-edit-field"><span>正文</span><input class="prep-edit-input" type="text" maxlength="80" value="${escapeHtml(item.item)}" data-packing-edit-input="${escapeHtml(item.id)}" aria-label="编辑物品正文" /></label>
+          <label class="prep-edit-field"><span>收纳位置</span><input class="prep-edit-input prep-edit-input--note" type="text" maxlength="40" value="${escapeHtml(item.bag)}" data-packing-bag-input="${escapeHtml(item.id)}" placeholder="收纳位置（可选）" aria-label="编辑物品收纳位置" /></label>
+          <label class="prep-edit-field"><span>备注</span><input class="prep-edit-input prep-edit-input--note" type="text" maxlength="100" value="${escapeHtml(item.note)}" data-packing-note-input="${escapeHtml(item.id)}" placeholder="备注（可选）" aria-label="编辑物品备注" /></label>
         </div>`
       : `<label class="check-item__copy" for="${escapeHtml(inputId)}"><strong>${escapeHtml(item.item)}${item.qty > 1 ? ` × ${item.qty}` : ""}</strong><span>${escapeHtml(meta)}</span></label>`;
     const actions = editing
@@ -2323,8 +2347,10 @@ function renderPacking() {
 
   function commitPackingEdit(id) {
     const input = list.querySelector(`[data-packing-edit-input="${CSS.escape(id)}"]`);
+    const bagInput = list.querySelector(`[data-packing-bag-input="${CSS.escape(id)}"]`);
     const noteInput = list.querySelector(`[data-packing-note-input="${CSS.escape(id)}"]`);
     const value = input?.value.trim();
+    const bag = bagInput?.value.trim() || "";
     const note = noteInput?.value.trim() || "";
     if (!value) {
       showToast("物品名称不能为空");
@@ -2334,12 +2360,15 @@ function renderPacking() {
     const custom = state.customPacking.find((item) => item.id === id);
     if (custom) {
       custom.item = value;
+      custom.bag = bag;
       custom.note = note;
     }
     else {
       const original = packingItems.find((item) => item.id === id);
       if (original?.item === value) delete state.packingEdits[id];
       else state.packingEdits[id] = value;
+      if ((original?.bag || "") === bag) delete state.packingBagEdits[id];
+      else state.packingBagEdits[id] = bag;
       if ((original?.note || "") === note) delete state.packingNoteEdits[id];
       else state.packingNoteEdits[id] = note;
     }
@@ -2382,6 +2411,7 @@ function renderPacking() {
       }
       delete state.packing[id];
       delete state.packingEdits[id];
+      delete state.packingBagEdits[id];
       delete state.packingNoteEdits[id];
       editingPackingId = null;
       saveState();
@@ -2391,10 +2421,10 @@ function renderPacking() {
   };
 
   list.onkeydown = (event) => {
-    if (!event.target.matches("[data-packing-edit-input], [data-packing-note-input]")) return;
+    if (!event.target.matches("[data-packing-edit-input], [data-packing-bag-input], [data-packing-note-input]")) return;
     if (event.key === "Enter") {
       event.preventDefault();
-      commitPackingEdit(event.target.dataset.packingEditInput || event.target.dataset.packingNoteInput);
+      commitPackingEdit(event.target.dataset.packingEditInput || event.target.dataset.packingBagInput || event.target.dataset.packingNoteInput);
     } else if (event.key === "Escape") {
       editingPackingId = null;
       renderPacking();
@@ -2502,10 +2532,12 @@ function setupPreparationTabs() {
   document.getElementById("addTaskForm").addEventListener("submit", (event) => {
     event.preventDefault();
     const input = document.getElementById("newTaskItem");
+    const noteInput = document.getElementById("newTaskNote");
     const value = input.value.trim();
     if (!value) return;
-    state.customTasks.push({ id: `custom-task-${Date.now()}`, category: "自定义", task: value, when: "自行安排" });
+    state.customTasks.push({ id: `custom-task-${Date.now()}`, category: "自定义", task: value, note: noteInput.value.trim(), when: "自行安排" });
     input.value = "";
+    noteInput.value = "";
     editingTaskId = null;
     saveState();
     renderTasks();
