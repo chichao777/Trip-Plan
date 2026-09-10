@@ -1707,6 +1707,17 @@ h4 {
   box-shadow: 0 0 0 3px rgba(39, 114, 93, 0.12);
 }
 
+.packing-edit-fields {
+  display: grid;
+  gap: 6px;
+}
+
+.check-item .prep-edit-input--note {
+  height: 34px;
+  border-color: var(--line);
+  font-size: 13px;
+}
+
 .packing-toolbar {
   padding-bottom: 14px;
   border-bottom: 1px solid var(--line);
@@ -1794,6 +1805,16 @@ h4 {
 .add-item input:focus {
   border-color: var(--green);
   box-shadow: 0 0 0 3px rgba(39, 114, 93, 0.12);
+}
+
+.add-item--packing > .icon-button {
+  align-self: end;
+}
+
+.add-packing-fields {
+  display: grid;
+  min-width: 0;
+  gap: 8px;
 }
 
 .memo-toolbar {

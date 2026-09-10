@@ -1080,6 +1080,7 @@ const defaultState = {
   customTasks: [],
   packing: {},
   packingEdits: {},
+  packingNoteEdits: {},
   deletedPacking: [],
   bookings: {},
   notes: "",
@@ -1151,6 +1152,7 @@ function normalizeState(saved = {}) {
       : [],
     packing: source.packing && typeof source.packing === "object" && !Array.isArray(source.packing) ? source.packing : {},
     packingEdits: source.packingEdits && typeof source.packingEdits === "object" && !Array.isArray(source.packingEdits) ? source.packingEdits : {},
+    packingNoteEdits: source.packingNoteEdits && typeof source.packingNoteEdits === "object" && !Array.isArray(source.packingNoteEdits) ? source.packingNoteEdits : {},
     deletedPacking: Array.isArray(source.deletedPacking) ? source.deletedPacking.map(String) : [],
     bookings: source.bookings && typeof source.bookings === "object" && !Array.isArray(source.bookings) ? source.bookings : {},
     customPacking: Array.isArray(source.customPacking)
@@ -2265,8 +2267,18 @@ function renderMemoTodos() {
 function allPackingItems() {
   const builtIn = packingItems
     .filter((item) => !state.deletedPacking.includes(item.id))
-    .map((item) => ({ ...item, item: state.packingEdits[item.id] || item.item }));
-  const custom = state.customPacking.map((item) => ({ ...item, category: item.category || "自定义", qty: 1, bag: "待安排", note: "" }));
+    .map((item) => ({
+      ...item,
+      item: state.packingEdits[item.id] || item.item,
+      note: Object.prototype.hasOwnProperty.call(state.packingNoteEdits, item.id) ? state.packingNoteEdits[item.id] : item.note
+    }));
+  const custom = state.customPacking.map((item) => ({
+    ...item,
+    category: item.category || "自定义",
+    qty: 1,
+    bag: "待安排",
+    note: typeof item.note === "string" ? item.note : ""
+  }));
   return [...builtIn, ...custom];
 }
 
@@ -2289,7 +2301,11 @@ function renderPacking() {
     const meta = [item.bag, item.note].filter(Boolean).join(" · ");
     const inputId = `packing-${item.id}`;
     const copy = editing
-      ? `<div class="check-item__copy"><input class="prep-edit-input" type="text" maxlength="80" value="${escapeHtml(item.item)}" data-packing-edit-input="${escapeHtml(item.id)}" aria-label="编辑物品名称" /><span>${escapeHtml(meta)}</span></div>`
+      ? `<div class="check-item__copy packing-edit-fields">
+          <input class="prep-edit-input" type="text" maxlength="80" value="${escapeHtml(item.item)}" data-packing-edit-input="${escapeHtml(item.id)}" aria-label="编辑物品名称" />
+          <input class="prep-edit-input prep-edit-input--note" type="text" maxlength="100" value="${escapeHtml(item.note)}" data-packing-note-input="${escapeHtml(item.id)}" placeholder="备注（可选）" aria-label="编辑物品备注" />
+          <span>${escapeHtml(item.bag)}</span>
+        </div>`
       : `<label class="check-item__copy" for="${escapeHtml(inputId)}"><strong>${escapeHtml(item.item)}${item.qty > 1 ? ` × ${item.qty}` : ""}</strong><span>${escapeHtml(meta)}</span></label>`;
     const actions = editing
       ? `<button class="prep-item-action" type="button" data-save-packing="${escapeHtml(item.id)}" title="保存修改" aria-label="保存修改"><i data-lucide="check"></i></button>
@@ -2306,19 +2322,26 @@ function renderPacking() {
   }).join("");
 
   function commitPackingEdit(id) {
-    const input = list.querySelector("[data-packing-edit-input]");
+    const input = list.querySelector(`[data-packing-edit-input="${CSS.escape(id)}"]`);
+    const noteInput = list.querySelector(`[data-packing-note-input="${CSS.escape(id)}"]`);
     const value = input?.value.trim();
+    const note = noteInput?.value.trim() || "";
     if (!value) {
       showToast("物品名称不能为空");
       input?.focus();
       return;
     }
     const custom = state.customPacking.find((item) => item.id === id);
-    if (custom) custom.item = value;
+    if (custom) {
+      custom.item = value;
+      custom.note = note;
+    }
     else {
       const original = packingItems.find((item) => item.id === id);
       if (original?.item === value) delete state.packingEdits[id];
       else state.packingEdits[id] = value;
+      if ((original?.note || "") === note) delete state.packingNoteEdits[id];
+      else state.packingNoteEdits[id] = note;
     }
     editingPackingId = null;
     saveState();
@@ -2359,6 +2382,7 @@ function renderPacking() {
       }
       delete state.packing[id];
       delete state.packingEdits[id];
+      delete state.packingNoteEdits[id];
       editingPackingId = null;
       saveState();
       renderPacking();
@@ -2367,10 +2391,10 @@ function renderPacking() {
   };
 
   list.onkeydown = (event) => {
-    if (!event.target.matches("[data-packing-edit-input]")) return;
+    if (!event.target.matches("[data-packing-edit-input], [data-packing-note-input]")) return;
     if (event.key === "Enter") {
       event.preventDefault();
-      commitPackingEdit(event.target.dataset.packingEditInput);
+      commitPackingEdit(event.target.dataset.packingEditInput || event.target.dataset.packingNoteInput);
     } else if (event.key === "Escape") {
       editingPackingId = null;
       renderPacking();
@@ -2491,11 +2515,13 @@ function setupPreparationTabs() {
   document.getElementById("addPackingForm").addEventListener("submit", (event) => {
     event.preventDefault();
     const input = document.getElementById("newPackingItem");
+    const noteInput = document.getElementById("newPackingNote");
     const value = input.value.trim();
     if (!value) return;
     const targetCategory = activeCategory === "全部" ? "自定义" : activeCategory;
-    state.customPacking.push({ id: `custom-${Date.now()}`, item: value, category: targetCategory });
+    state.customPacking.push({ id: `custom-${Date.now()}`, item: value, note: noteInput.value.trim(), category: targetCategory });
     input.value = "";
+    noteInput.value = "";
     activeCategory = targetCategory;
     editingPackingId = null;
     saveState();
