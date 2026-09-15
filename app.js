@@ -1116,6 +1116,7 @@ let activeCategory = "全部";
 let editingTaskId = null;
 let editingPackingId = null;
 let editingExpenseId = null;
+let activeExpenseCategory = null;
 let toastTimer;
 let activeCityId = "barcelona";
 let cityMapInstance;
@@ -2351,10 +2352,20 @@ function renderExpenses() {
       total: expenses.filter((expense) => expense.category === category.id).reduce((sum, expense) => sum + expense.amountCents, 0)
     }))
     .filter((category) => category.total > 0);
+  if (activeExpenseCategory && !categoryTotals.some((category) => category.id === activeExpenseCategory)) {
+    activeExpenseCategory = null;
+  }
   breakdown.hidden = categoryTotals.length === 0;
-  breakdown.innerHTML = categoryTotals.map((category) => `<span class="expense-breakdown__item expense-category--${category.id}"><b>${category.label}</b>${formatYuan(category.total)}</span>`).join("");
+  breakdown.innerHTML = categoryTotals.map((category) => {
+    const active = activeExpenseCategory === category.id;
+    const actionLabel = active ? "显示全部花销明细" : `只显示${category.label}花销`;
+    return `<button class="expense-breakdown__item expense-category--${category.id}${active ? " is-active" : ""}" type="button" data-expense-filter="${category.id}" aria-pressed="${active}" aria-label="${actionLabel}" title="${actionLabel}"><b>${category.label}</b>${formatYuan(category.total)}</button>`;
+  }).join("");
 
-  list.innerHTML = expenses.map((expense) => {
+  const visibleExpenses = activeExpenseCategory
+    ? expenses.filter((expense) => expense.category === activeExpenseCategory)
+    : expenses;
+  list.innerHTML = visibleExpenses.map((expense) => {
     const category = expenseCategoryById(expense.category);
     const editing = editingExpenseId === expense.id;
     if (editing) {
@@ -2381,6 +2392,14 @@ function renderExpenses() {
       </div>
     </div>`;
   }).join("");
+
+  breakdown.onclick = (event) => {
+    const button = event.target.closest("[data-expense-filter]");
+    if (!button) return;
+    activeExpenseCategory = activeExpenseCategory === button.dataset.expenseFilter ? null : button.dataset.expenseFilter;
+    editingExpenseId = null;
+    renderExpenses();
+  };
 
   function commitExpenseEdit(id) {
     const expense = state.expenses.find((item) => item.id === id);

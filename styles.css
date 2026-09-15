@@ -1960,9 +1960,28 @@ h4 {
   align-items: center;
   gap: 6px;
   padding: 5px 8px;
+  color: inherit;
+  border: 0;
   border-radius: 4px;
+  cursor: pointer;
+  font: inherit;
   font-size: 12px;
   font-variant-numeric: tabular-nums;
+  transition: box-shadow 160ms ease, filter 160ms ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.expense-breakdown__item:hover {
+  filter: brightness(0.97);
+}
+
+.expense-breakdown__item:focus-visible {
+  outline: 2px solid var(--green);
+  outline-offset: 2px;
+}
+
+.expense-breakdown__item.is-active {
+  box-shadow: inset 0 0 0 1px currentColor;
 }
 
 .expense-breakdown__item b {
