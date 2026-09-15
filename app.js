@@ -1067,6 +1067,16 @@ const defaultMemoTodos = [
   { id: "memo-food", text: "补充想去的餐厅、咖啡店和购物点", completed: false }
 ];
 
+const expenseCategories = [
+  { id: "transport", label: "交通" },
+  { id: "accommodation", label: "住宿" },
+  { id: "food", label: "餐饮" },
+  { id: "sightseeing", label: "景点" },
+  { id: "shopping", label: "购物" },
+  { id: "connectivity", label: "通讯" },
+  { id: "other", label: "其他" }
+];
+
 const STORAGE_KEY = "europe-trip-2026-20260908-state-v1";
 const LOCAL_UPDATED_KEY = `${STORAGE_KEY}-updated-at`;
 const LOCAL_PENDING_KEY = `${STORAGE_KEY}-pending-cloud-sync`;
@@ -1087,7 +1097,8 @@ const defaultState = {
   bookings: {},
   notes: "",
   customPacking: [],
-  memoTodos: defaultMemoTodos
+  memoTodos: defaultMemoTodos,
+  expenses: []
 };
 
 const supabaseClient = window.supabase?.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
@@ -1104,6 +1115,7 @@ let localUpdatedAt = Number(localStorage.getItem(LOCAL_UPDATED_KEY)) || 0;
 let activeCategory = "全部";
 let editingTaskId = null;
 let editingPackingId = null;
+let editingExpenseId = null;
 let toastTimer;
 let activeCityId = "barcelona";
 let cityMapInstance;
@@ -1163,7 +1175,18 @@ function normalizeState(saved = {}) {
       ? source.customPacking.filter((item) => item && typeof item.item === "string")
       : [],
     notes: "",
-    memoTodos
+    memoTodos,
+    expenses: Array.isArray(source.expenses)
+      ? source.expenses
+        .filter((item) => item && Number.isFinite(Number(item.amountCents)) && Number(item.amountCents) > 0)
+        .map((item, index) => ({
+          id: String(item.id || `expense-saved-${index}`),
+          category: expenseCategories.some((category) => category.id === item.category) ? item.category : "other",
+          description: typeof item.description === "string" ? item.description : "",
+          amountCents: Math.round(Number(item.amountCents)),
+          createdAt: Number.isFinite(Number(item.createdAt)) ? Number(item.createdAt) : index
+        }))
+      : []
   };
 }
 
@@ -1314,10 +1337,12 @@ async function sendEmailOtp(email) {
 function renderSynchronizedState() {
   editingTaskId = null;
   editingPackingId = null;
+  editingExpenseId = null;
   renderBookings();
   renderTasks();
   renderPacking();
   renderMemoTodos();
+  renderExpenses();
   updateProgress();
   refreshIcons();
 }
@@ -2287,6 +2312,137 @@ function renderMemoTodos() {
   refreshIcons();
 }
 
+function expenseCategoryById(id) {
+  return expenseCategories.find((category) => category.id === id) || expenseCategories[expenseCategories.length - 1];
+}
+
+function formatEuros(amountCents) {
+  return new Intl.NumberFormat("zh-CN", {
+    style: "currency",
+    currency: "EUR",
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
+  }).format(amountCents / 100);
+}
+
+function expenseAmountFromInput(value) {
+  const amount = Number(String(value).replace(",", "."));
+  const amountCents = Math.round(amount * 100);
+  return Number.isFinite(amountCents) && amountCents > 0 && amountCents <= 99999999 ? amountCents : 0;
+}
+
+function expenseCategoryOptions(selectedId) {
+  return expenseCategories.map((category) => `<option value="${category.id}"${category.id === selectedId ? " selected" : ""}>${category.label}</option>`).join("");
+}
+
+function renderExpenses() {
+  const list = document.getElementById("expenseList");
+  const empty = document.getElementById("expenseEmpty");
+  const breakdown = document.getElementById("expenseBreakdown");
+  const expenses = [...state.expenses].sort((a, b) => b.createdAt - a.createdAt);
+  const totalCents = expenses.reduce((total, expense) => total + expense.amountCents, 0);
+
+  document.getElementById("expenseTotal").textContent = formatEuros(totalCents);
+  empty.hidden = expenses.length > 0;
+
+  const categoryTotals = expenseCategories
+    .map((category) => ({
+      ...category,
+      total: expenses.filter((expense) => expense.category === category.id).reduce((sum, expense) => sum + expense.amountCents, 0)
+    }))
+    .filter((category) => category.total > 0);
+  breakdown.hidden = categoryTotals.length === 0;
+  breakdown.innerHTML = categoryTotals.map((category) => `<span class="expense-breakdown__item expense-category--${category.id}"><b>${category.label}</b>${formatEuros(category.total)}</span>`).join("");
+
+  list.innerHTML = expenses.map((expense) => {
+    const category = expenseCategoryById(expense.category);
+    const editing = editingExpenseId === expense.id;
+    if (editing) {
+      return `<div class="expense-item expense-item--editing">
+        <div class="expense-edit-fields">
+          <select data-expense-category="${escapeHtml(expense.id)}" aria-label="编辑花销分类">${expenseCategoryOptions(expense.category)}</select>
+          <input type="text" maxlength="50" value="${escapeHtml(expense.description)}" data-expense-description="${escapeHtml(expense.id)}" placeholder="项目（可选）" aria-label="编辑花销项目" />
+        </div>
+        <label class="expense-amount-field"><span>€</span><input type="number" min="0.01" max="999999.99" step="0.01" inputmode="decimal" value="${(expense.amountCents / 100).toFixed(2)}" data-expense-amount="${escapeHtml(expense.id)}" aria-label="编辑花销金额（欧元）" /></label>
+        <div class="expense-item__actions">
+          <button class="prep-item-action" type="button" data-save-expense="${escapeHtml(expense.id)}" title="保存修改" aria-label="保存修改"><i data-lucide="check"></i></button>
+          <button class="prep-item-action" type="button" data-cancel-expense="${escapeHtml(expense.id)}" title="取消修改" aria-label="取消修改"><i data-lucide="x"></i></button>
+        </div>
+      </div>`;
+    }
+
+    return `<div class="expense-item">
+      <span class="expense-category expense-category--${category.id}">${category.label}</span>
+      <div class="expense-item__copy"><strong>${escapeHtml(expense.description || category.label)}</strong>${expense.description ? `<small>${escapeHtml(category.label)}</small>` : ""}</div>
+      <strong class="expense-item__amount">${formatEuros(expense.amountCents)}</strong>
+      <div class="expense-item__actions">
+        <button class="prep-item-action" type="button" data-edit-expense="${escapeHtml(expense.id)}" title="编辑花销" aria-label="编辑 ${escapeHtml(expense.description || category.label)}"><i data-lucide="pencil"></i></button>
+        <button class="prep-item-action prep-item-action--delete" type="button" data-delete-expense="${escapeHtml(expense.id)}" title="删除花销" aria-label="删除 ${escapeHtml(expense.description || category.label)}"><i data-lucide="trash-2"></i></button>
+      </div>
+    </div>`;
+  }).join("");
+
+  function commitExpenseEdit(id) {
+    const expense = state.expenses.find((item) => item.id === id);
+    const categoryInput = list.querySelector(`[data-expense-category="${CSS.escape(id)}"]`);
+    const descriptionInput = list.querySelector(`[data-expense-description="${CSS.escape(id)}"]`);
+    const amountInput = list.querySelector(`[data-expense-amount="${CSS.escape(id)}"]`);
+    const amountCents = expenseAmountFromInput(amountInput?.value);
+    if (!expense || !amountCents) {
+      showToast("请输入有效金额");
+      amountInput?.focus();
+      return;
+    }
+    expense.category = expenseCategoryById(categoryInput?.value).id;
+    expense.description = descriptionInput?.value.trim() || "";
+    expense.amountCents = amountCents;
+    editingExpenseId = null;
+    saveState();
+    renderExpenses();
+    showToast("花销已更新");
+  }
+
+  list.onclick = (event) => {
+    const editButton = event.target.closest("[data-edit-expense]");
+    const saveButton = event.target.closest("[data-save-expense]");
+    const cancelButton = event.target.closest("[data-cancel-expense]");
+    const deleteButton = event.target.closest("[data-delete-expense]");
+
+    if (editButton) {
+      editingExpenseId = editButton.dataset.editExpense;
+      renderExpenses();
+      list.querySelector("[data-expense-description]")?.focus();
+    } else if (saveButton) {
+      commitExpenseEdit(saveButton.dataset.saveExpense);
+    } else if (cancelButton) {
+      editingExpenseId = null;
+      renderExpenses();
+    } else if (deleteButton) {
+      const id = deleteButton.dataset.deleteExpense;
+      const expense = state.expenses.find((item) => item.id === id);
+      if (!expense || !window.confirm(`删除“${expense.description || expenseCategoryById(expense.category).label}”这笔花销？`)) return;
+      state.expenses = state.expenses.filter((item) => item.id !== id);
+      editingExpenseId = null;
+      saveState();
+      renderExpenses();
+      showToast("已删除花销");
+    }
+  };
+
+  list.onkeydown = (event) => {
+    if (!event.target.matches("[data-expense-description], [data-expense-amount]")) return;
+    if (event.key === "Enter") {
+      event.preventDefault();
+      commitExpenseEdit(event.target.dataset.expenseDescription || event.target.dataset.expenseAmount);
+    } else if (event.key === "Escape") {
+      editingExpenseId = null;
+      renderExpenses();
+    }
+  };
+
+  refreshIcons();
+}
+
 function allPackingItems() {
   const builtIn = packingItems
     .filter((item) => !state.deletedPacking.includes(item.id))
@@ -2576,6 +2732,35 @@ function setupNotes() {
   });
 }
 
+function setupExpenses() {
+  document.getElementById("addExpenseForm").addEventListener("submit", (event) => {
+    event.preventDefault();
+    const categoryInput = document.getElementById("expenseCategory");
+    const descriptionInput = document.getElementById("expenseDescription");
+    const amountInput = document.getElementById("expenseAmount");
+    const amountCents = expenseAmountFromInput(amountInput.value);
+    if (!amountCents) {
+      showToast("请输入有效金额");
+      amountInput.focus();
+      return;
+    }
+    state.expenses.push({
+      id: `expense-${Date.now()}`,
+      category: expenseCategoryById(categoryInput.value).id,
+      description: descriptionInput.value.trim(),
+      amountCents,
+      createdAt: Date.now()
+    });
+    descriptionInput.value = "";
+    amountInput.value = "";
+    editingExpenseId = null;
+    saveState();
+    renderExpenses();
+    amountInput.focus();
+    showToast("已记录花销");
+  });
+}
+
 function setupShare() {
   document.getElementById("shareTrip").addEventListener("click", async () => {
     const payload = { title: document.title, text: "2026 国庆欧洲旅行计划", url: window.location.href };
@@ -2603,11 +2788,13 @@ renderBookings();
 renderTasks();
 renderPacking();
 renderMemoTodos();
+renderExpenses();
 setupCustomItinerary();
 setupNavigation();
 setupItineraryTabs();
 setupPreparationTabs();
 setupNotes();
+setupExpenses();
 setupShare();
 setupCloudSync();
 updateProgress();
