@@ -1918,32 +1918,23 @@ h4 {
   gap: 16px;
 }
 
-.expense-summary > div > span {
-  display: block;
-  margin-bottom: 3px;
-  color: var(--green);
-  font-size: 10px;
-  font-weight: 900;
-  letter-spacing: 0;
+.expense-heading {
+  min-width: 0;
 }
 
-.expense-summary h3 {
-  font-size: 19px;
-}
-
-.expense-summary p {
+.expense-summary > .expense-total {
   display: grid;
   justify-items: end;
   margin: 0;
 }
 
-.expense-summary p span {
+.expense-total span {
   color: var(--muted);
   font-size: 11px;
   font-weight: 700;
 }
 
-.expense-summary p strong {
+.expense-total strong {
   color: var(--forest);
   font-size: 22px;
   line-height: 1.15;
@@ -2003,6 +1994,11 @@ h4 {
   font-weight: 900;
 }
 
+.expense-category--visa {
+  color: #6a4b72;
+  background: #f1e8f3;
+}
+
 .expense-category--transport {
   color: #205f7b;
   background: #e5f2f7;
@@ -2026,11 +2022,6 @@ h4 {
 .expense-category--shopping {
   color: #765271;
   background: #f2e9f1;
-}
-
-.expense-category--connectivity {
-  color: #4f5e84;
-  background: #e9edf7;
 }
 
 .expense-category--other {

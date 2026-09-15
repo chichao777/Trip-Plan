@@ -16,7 +16,7 @@
     />
     <title>2026 国庆欧洲旅行计划</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="anonymous" />
-    <link rel="stylesheet" href="./styles.css?v=20260915-1" />
+    <link rel="stylesheet" href="./styles.css?v=20260915-2" />
   </head>
   <body>
     <div class="app-shell">
@@ -317,8 +317,8 @@
           </form>
           <section class="expense-tracker" aria-labelledby="expenseTitle">
             <div class="expense-summary">
-              <div><span>TRIP EXPENSES</span><h3 id="expenseTitle">旅行花销</h3></div>
-              <p><span>总花销</span><strong id="expenseTotal">€0.00</strong></p>
+              <div class="expense-heading"><p class="section-kicker">TRIP EXPENSES</p><h2 id="expenseTitle">旅行花销</h2></div>
+              <p class="expense-total"><span>总花销</span><strong id="expenseTotal">¥0.00</strong></p>
             </div>
             <div class="expense-breakdown" id="expenseBreakdown" aria-label="分类小计" hidden></div>
             <div class="expense-list" id="expenseList"></div>
@@ -326,18 +326,18 @@
             <form class="expense-form" id="addExpenseForm">
               <div class="expense-form__details">
                 <select id="expenseCategory" aria-label="花销分类">
+                  <option value="visa">签证</option>
                   <option value="transport">交通</option>
                   <option value="accommodation">住宿</option>
                   <option value="food" selected>餐饮</option>
                   <option value="sightseeing">景点</option>
                   <option value="shopping">购物</option>
-                  <option value="connectivity">通讯</option>
                   <option value="other">其他</option>
                 </select>
                 <input id="expenseDescription" type="text" maxlength="50" placeholder="项目（可选）" aria-label="花销项目" />
               </div>
               <div class="expense-form__submit">
-                <label class="expense-amount-field"><span>€</span><input id="expenseAmount" type="number" min="0.01" max="999999.99" step="0.01" inputmode="decimal" placeholder="金额" aria-label="花销金额（欧元）" /></label>
+                <label class="expense-amount-field"><span>¥</span><input id="expenseAmount" type="number" min="0.01" max="999999.99" step="0.01" inputmode="decimal" placeholder="金额" aria-label="花销金额（人民币）" /></label>
                 <button class="icon-button" type="submit" title="添加花销" aria-label="添加花销"><i data-lucide="plus"></i></button>
               </div>
             </form>
@@ -424,6 +424,6 @@
     <script src="./assets/lucide.min.js"></script>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin="anonymous"></script>
     <script src="./assets/supabase.min.js"></script>
-    <script src="./app.js?v=20260915-1"></script>
+    <script src="./app.js?v=20260915-2"></script>
   </body>
 </html>

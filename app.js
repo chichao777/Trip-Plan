@@ -1068,12 +1068,12 @@ const defaultMemoTodos = [
 ];
 
 const expenseCategories = [
+  { id: "visa", label: "签证" },
   { id: "transport", label: "交通" },
   { id: "accommodation", label: "住宿" },
   { id: "food", label: "餐饮" },
   { id: "sightseeing", label: "景点" },
   { id: "shopping", label: "购物" },
-  { id: "connectivity", label: "通讯" },
   { id: "other", label: "其他" }
 ];
 
@@ -2316,10 +2316,10 @@ function expenseCategoryById(id) {
   return expenseCategories.find((category) => category.id === id) || expenseCategories[expenseCategories.length - 1];
 }
 
-function formatEuros(amountCents) {
+function formatYuan(amountCents) {
   return new Intl.NumberFormat("zh-CN", {
     style: "currency",
-    currency: "EUR",
+    currency: "CNY",
     minimumFractionDigits: 2,
     maximumFractionDigits: 2
   }).format(amountCents / 100);
@@ -2342,7 +2342,7 @@ function renderExpenses() {
   const expenses = [...state.expenses].sort((a, b) => b.createdAt - a.createdAt);
   const totalCents = expenses.reduce((total, expense) => total + expense.amountCents, 0);
 
-  document.getElementById("expenseTotal").textContent = formatEuros(totalCents);
+  document.getElementById("expenseTotal").textContent = formatYuan(totalCents);
   empty.hidden = expenses.length > 0;
 
   const categoryTotals = expenseCategories
@@ -2352,7 +2352,7 @@ function renderExpenses() {
     }))
     .filter((category) => category.total > 0);
   breakdown.hidden = categoryTotals.length === 0;
-  breakdown.innerHTML = categoryTotals.map((category) => `<span class="expense-breakdown__item expense-category--${category.id}"><b>${category.label}</b>${formatEuros(category.total)}</span>`).join("");
+  breakdown.innerHTML = categoryTotals.map((category) => `<span class="expense-breakdown__item expense-category--${category.id}"><b>${category.label}</b>${formatYuan(category.total)}</span>`).join("");
 
   list.innerHTML = expenses.map((expense) => {
     const category = expenseCategoryById(expense.category);
@@ -2363,7 +2363,7 @@ function renderExpenses() {
           <select data-expense-category="${escapeHtml(expense.id)}" aria-label="编辑花销分类">${expenseCategoryOptions(expense.category)}</select>
           <input type="text" maxlength="50" value="${escapeHtml(expense.description)}" data-expense-description="${escapeHtml(expense.id)}" placeholder="项目（可选）" aria-label="编辑花销项目" />
         </div>
-        <label class="expense-amount-field"><span>€</span><input type="number" min="0.01" max="999999.99" step="0.01" inputmode="decimal" value="${(expense.amountCents / 100).toFixed(2)}" data-expense-amount="${escapeHtml(expense.id)}" aria-label="编辑花销金额（欧元）" /></label>
+        <label class="expense-amount-field"><span>¥</span><input type="number" min="0.01" max="999999.99" step="0.01" inputmode="decimal" value="${(expense.amountCents / 100).toFixed(2)}" data-expense-amount="${escapeHtml(expense.id)}" aria-label="编辑花销金额（人民币）" /></label>
         <div class="expense-item__actions">
           <button class="prep-item-action" type="button" data-save-expense="${escapeHtml(expense.id)}" title="保存修改" aria-label="保存修改"><i data-lucide="check"></i></button>
           <button class="prep-item-action" type="button" data-cancel-expense="${escapeHtml(expense.id)}" title="取消修改" aria-label="取消修改"><i data-lucide="x"></i></button>
@@ -2374,7 +2374,7 @@ function renderExpenses() {
     return `<div class="expense-item">
       <span class="expense-category expense-category--${category.id}">${category.label}</span>
       <div class="expense-item__copy"><strong>${escapeHtml(expense.description || category.label)}</strong>${expense.description ? `<small>${escapeHtml(category.label)}</small>` : ""}</div>
-      <strong class="expense-item__amount">${formatEuros(expense.amountCents)}</strong>
+      <strong class="expense-item__amount">${formatYuan(expense.amountCents)}</strong>
       <div class="expense-item__actions">
         <button class="prep-item-action" type="button" data-edit-expense="${escapeHtml(expense.id)}" title="编辑花销" aria-label="编辑 ${escapeHtml(expense.description || category.label)}"><i data-lucide="pencil"></i></button>
         <button class="prep-item-action prep-item-action--delete" type="button" data-delete-expense="${escapeHtml(expense.id)}" title="删除花销" aria-label="删除 ${escapeHtml(expense.description || category.label)}"><i data-lucide="trash-2"></i></button>
